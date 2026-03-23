@@ -171,9 +171,20 @@ exports.handler = async (event) => {
 
     persona._type = "persona";
     persona.prompt = prompt.trim();
-    if (typeof persona.slug === "string") {
-      persona.slug = { _type: "slug", current: persona.slug };
-    }
+
+    // Normalize slug to Sanity format and sanitize
+    const rawSlug =
+      typeof persona.slug === "string"
+        ? persona.slug
+        : persona.slug?.current || persona.title || "persona";
+    persona.slug = {
+      _type: "slug",
+      current: rawSlug
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, "")
+        .slice(0, 96),
+    };
 
     const doc = await sanity.create(persona);
 
@@ -188,12 +199,14 @@ exports.handler = async (event) => {
     };
   } catch (err) {
     console.error("Generation error:", err);
+    const message =
+      err?.response?.body?.error?.description ||
+      err?.message ||
+      "Failed to generate persona. Please try again.";
     return {
       statusCode: 500,
       headers,
-      body: JSON.stringify({
-        error: "Failed to generate persona. Please try again.",
-      }),
+      body: JSON.stringify({ error: message }),
     };
   }
 };

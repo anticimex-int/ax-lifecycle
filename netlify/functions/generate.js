@@ -1,34 +1,82 @@
 const crypto = require("crypto");
 const Anthropic = require("@anthropic-ai/sdk");
-const { createClient } = require("@sanity/client");
 
-function addKeys(obj) {
-  if (Array.isArray(obj)) {
-    return obj.map((item) => {
-      if (item && typeof item === "object" && !Array.isArray(item)) {
-        const keyed = item._key ? item : { _key: crypto.randomUUID().slice(0, 8), ...item };
-        return addKeys(keyed);
-      }
-      return item;
-    });
-  }
-  if (obj && typeof obj === "object") {
-    const out = {};
-    for (const [k, v] of Object.entries(obj)) {
-      out[k] = addKeys(v);
-    }
-    return out;
-  }
-  return obj;
+const SANITY_API = `https://${process.env.SANITY_PROJECT_ID}.api.sanity.io/v2024-01-01/data/mutate/${process.env.SANITY_DATASET}`;
+const SANITY_TOKEN = process.env.SANITY_TOKEN;
+
+function key() {
+  return crypto.randomUUID().slice(0, 8);
 }
 
-const sanity = createClient({
-  projectId: process.env.SANITY_PROJECT_ID,
-  dataset: process.env.SANITY_DATASET,
-  token: process.env.SANITY_TOKEN,
-  apiVersion: "2024-01-01",
-  useCdn: false,
-});
+function sanitize(persona) {
+  const doc = {
+    _type: "persona",
+    title: String(persona.title || "Untitled"),
+    prompt: "",
+    emoji: String(persona.emoji || ""),
+    heroTitle: String(persona.heroTitle || ""),
+    heroDesc: String(persona.heroDesc || ""),
+    scenarioEmoji: String(persona.scenarioEmoji || ""),
+    scenarioTitle: String(persona.scenarioTitle || ""),
+    scenarioText: String(persona.scenarioText || ""),
+    closeStatement: String(persona.closeStatement || ""),
+  };
+
+  // Slug
+  const rawSlug =
+    typeof persona.slug === "string"
+      ? persona.slug
+      : persona.slug?.current || persona.title || "persona";
+  doc.slug = {
+    _type: "slug",
+    current: String(rawSlug)
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .slice(0, 96),
+  };
+
+  // Context cards
+  doc.context = (persona.context || []).map((c) => ({
+    _key: key(),
+    _type: "object",
+    title: String(c.title || ""),
+    items: (c.items || []).map(String),
+  }));
+
+  // Stages
+  doc.stages = (persona.stages || []).map((s) => ({
+    _key: key(),
+    _type: "object",
+    heading: String(s.heading || ""),
+    subtitle: String(s.subtitle || ""),
+    quote: String(s.quote || ""),
+    outcome: String(s.outcome || ""),
+    cards: (s.cards || []).map((c) => ({
+      _key: key(),
+      _type: "object",
+      icon: String(c.icon || ""),
+      title: String(c.title || ""),
+      style: ["default", "highlight", "action", "full"].includes(c.style) ? c.style : "default",
+      items: (c.items || []).map(String),
+    })),
+    feelings: (s.feelings || []).map(String),
+    actions: (s.actions || []).map(String),
+    interactions: (s.interactions || []).map(String),
+    painpoints: (s.painpoints || []).map(String),
+    improvements: (s.improvements || []).map(String),
+  }));
+
+  // Metrics
+  doc.metrics = (persona.metrics || []).map((m) => ({
+    _key: key(),
+    _type: "object",
+    value: String(m.value || ""),
+    label: String(m.label || ""),
+  }));
+
+  return doc;
+}
 
 const SYSTEM_PROMPT = `You are a customer lifecycle expert for Anticimex, a global pest control and prevention company operating in 22 countries with 234+ branches.
 
@@ -190,55 +238,47 @@ exports.handler = async (event) => {
       }
     }
 
-    // Only keep fields that match the Sanity persona schema
-    const ALLOWED = [
-      "title","emoji","heroTitle","heroDesc",
-      "scenarioEmoji","scenarioTitle","scenarioText",
-      "context","stages","closeStatement","metrics",
-    ];
-    const clean = { _type: "persona", prompt: prompt.trim() };
-    for (const key of ALLOWED) {
-      if (persona[key] !== undefined) clean[key] = persona[key];
+    const doc = sanitize(persona);
+    doc.prompt = prompt.trim();
+
+    // Use raw Sanity mutation API to bypass client validation
+    const res = await fetch(SANITY_API, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${SANITY_TOKEN}`,
+      },
+      body: JSON.stringify({
+        mutations: [{ create: doc }],
+      }),
+    });
+
+    const result = await res.json();
+
+    if (!res.ok) {
+      console.error("Sanity error:", JSON.stringify(result));
+      throw new Error(result.error?.description || result.message || "Sanity create failed");
     }
 
-    // Normalize slug
-    const rawSlug =
-      typeof persona.slug === "string"
-        ? persona.slug
-        : persona.slug?.current || persona.title || "persona";
-    clean.slug = {
-      _type: "slug",
-      current: rawSlug
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-|-$/g, "")
-        .slice(0, 96),
-    };
-
-    const doc = await sanity.create(addKeys(clean));
+    const createdId = result.results?.[0]?.id;
 
     return {
       statusCode: 200,
       headers,
       body: JSON.stringify({
-        _id: doc._id,
+        _id: createdId,
         title: doc.title,
         slug: doc.slug,
       }),
     };
   } catch (err) {
-    console.error("Generation error:", JSON.stringify(err, Object.getOwnPropertyNames(err), 2));
-    const message =
-      err?.response?.body?.error?.items?.[0]?.message ||
-      err?.response?.body?.error?.description ||
-      err?.response?.body?.message ||
-      err?.statusCode ? `Sanity error ${err.statusCode}: ${err.message}` :
-      err?.message ||
-      "Failed to generate persona. Please try again.";
+    console.error("Generation error:", err.message || err);
     return {
       statusCode: 500,
       headers,
-      body: JSON.stringify({ error: message }),
+      body: JSON.stringify({
+        error: err.message || "Failed to generate persona. Please try again.",
+      }),
     };
   }
 };

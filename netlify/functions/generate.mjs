@@ -1,14 +1,7 @@
 import crypto from "crypto";
 import Anthropic from "@anthropic-ai/sdk";
-import { createClient } from "@sanity/client";
 
-const sanity = createClient({
-  projectId: process.env.SANITY_PROJECT_ID,
-  dataset: process.env.SANITY_DATASET,
-  token: process.env.SANITY_TOKEN,
-  apiVersion: "2024-01-01",
-  useCdn: false,
-});
+const SANITY_API = `https://${process.env.SANITY_PROJECT_ID}.api.sanity.io/v2024-01-01/data/mutate/${process.env.SANITY_DATASET}?returnIds=true`;
 
 function key() {
   return crypto.randomUUID().slice(0, 8);
@@ -52,7 +45,7 @@ function sanitize(persona, prompt) {
       outcome: String(s.outcome || ""),
       cards: (s.cards || []).map((c) => ({
         _key: key(),
-          icon: String(c.icon || ""),
+        icon: String(c.icon || ""),
         title: String(c.title || ""),
         style: ["default", "highlight", "action", "full"].includes(c.style)
           ? c.style
@@ -157,116 +150,80 @@ IMPORTANT RULES:
 - Return ONLY the JSON object, no markdown code fences or other text`;
 
 export default async (req) => {
-  // CORS preflight
   if (req.method === "OPTIONS") {
     return new Response(null, {
       status: 204,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "Content-Type",
-        "Access-Control-Allow-Methods": "POST, OPTIONS",
-      },
+      headers: { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "Content-Type", "Access-Control-Allow-Methods": "POST, OPTIONS" },
     });
   }
 
-  const corsHeaders = {
-    "Access-Control-Allow-Origin": "*",
-    "Content-Type": "text/event-stream",
-    "Cache-Control": "no-cache",
-    "Connection": "keep-alive",
-  };
+  const jsonRes = (obj, status = 200) =>
+    new Response(JSON.stringify(obj), {
+      status,
+      headers: { "Access-Control-Allow-Origin": "*", "Content-Type": "application/json" },
+    });
 
-  const jsonHeaders = {
-    "Access-Control-Allow-Origin": "*",
-    "Content-Type": "application/json",
-  };
-
-  if (req.method !== "POST") {
-    return new Response(JSON.stringify({ error: "Method not allowed" }), { status: 405, headers: jsonHeaders });
-  }
+  if (req.method !== "POST") return jsonRes({ error: "Method not allowed" }, 405);
 
   let body;
-  try {
-    body = await req.json();
-  } catch {
-    return new Response(JSON.stringify({ error: "Invalid JSON" }), { status: 400, headers: jsonHeaders });
-  }
+  try { body = await req.json(); } catch { return jsonRes({ error: "Invalid JSON" }, 400); }
 
   const { prompt, passphrase } = body;
+  if (!passphrase || passphrase !== process.env.PASSPHRASE) return jsonRes({ error: "Invalid passphrase" }, 403);
+  if (!prompt || prompt.trim().length < 3) return jsonRes({ error: "Please provide a persona description" }, 400);
 
-  if (!passphrase || passphrase !== process.env.PASSPHRASE) {
-    return new Response(JSON.stringify({ error: "Invalid passphrase" }), { status: 403, headers: jsonHeaders });
-  }
+  // Do ALL the work before returning a response — the response is returned only when done
+  try {
+    // Step 1: Call Claude using streaming to collect text
+    const anthropic = new Anthropic();
+    let text = "";
 
-  if (!prompt || prompt.trim().length < 3) {
-    return new Response(JSON.stringify({ error: "Please provide a persona description" }), { status: 400, headers: jsonHeaders });
-  }
+    const stream = anthropic.messages.stream({
+      model: "claude-sonnet-4-6",
+      max_tokens: 8192,
+      messages: [{ role: "user", content: `Generate a detailed Anticimex customer lifecycle persona journey for: ${prompt.trim()}` }],
+      system: SYSTEM_PROMPT,
+    });
 
-  // Use SSE streaming to keep the connection alive
-  const stream = new ReadableStream({
-    async start(controller) {
-      const send = (event, data) => {
-        controller.enqueue(new TextEncoder().encode(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`));
-      };
-
-      try {
-        send("progress", { stage: "generating", message: "AI is generating the persona..." });
-
-        // Stream from Claude to keep connection alive
-        const anthropic = new Anthropic();
-        let text = "";
-
-        const claudeStream = anthropic.messages.stream({
-          model: "claude-sonnet-4-6",
-          max_tokens: 8192,
-          messages: [{ role: "user", content: `Generate a detailed Anticimex customer lifecycle persona journey for: ${prompt.trim()}` }],
-          system: SYSTEM_PROMPT,
-        });
-
-        let chunkCount = 0;
-        claudeStream.on("text", (chunk) => {
-          text += chunk;
-          chunkCount++;
-          // Send progress every 20 chunks to keep connection alive
-          if (chunkCount % 20 === 0) {
-            send("progress", { stage: "generating", message: "AI is writing the persona journey..." });
-          }
-        });
-
-        const finalMessage = await claudeStream.finalMessage();
-
-        // If streaming didn't capture text, get it from final message
-        if (!text && finalMessage.content[0]) {
-          text = finalMessage.content[0].text;
-        }
-
-        send("progress", { stage: "saving", message: "Saving to database..." });
-
-        // Parse JSON
-        let persona;
-        try {
-          persona = JSON.parse(text);
-        } catch {
-          const m = text.match(/\{[\s\S]*\}/);
-          if (m) persona = JSON.parse(m[0]);
-          else throw new Error("Failed to parse AI response as JSON");
-        }
-
-        // Sanitize and write to Sanity
-        const doc = sanitize(persona, prompt.trim());
-        const created = await sanity.create(doc);
-
-        send("done", { _id: created._id, title: created.title });
-      } catch (err) {
-        console.error("Generate error:", err);
-        send("error", { error: err.message || "Generation failed" });
-      } finally {
-        controller.close();
+    // Collect streamed text
+    for await (const event of stream) {
+      if (event.type === "content_block_delta" && event.delta?.type === "text_delta") {
+        text += event.delta.text;
       }
-    },
-  });
+    }
 
-  return new Response(stream, { status: 200, headers: corsHeaders });
+    // Step 2: Parse JSON
+    let persona;
+    try {
+      persona = JSON.parse(text);
+    } catch {
+      const m = text.match(/\{[\s\S]*\}/);
+      if (m) persona = JSON.parse(m[0]);
+      else throw new Error("Failed to parse AI response");
+    }
+
+    // Step 3: Sanitize and write to Sanity
+    const doc = sanitize(persona, prompt.trim());
+    const res = await fetch(SANITY_API, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.SANITY_TOKEN}`,
+      },
+      body: JSON.stringify({ mutations: [{ create: doc }] }),
+    });
+
+    const result = await res.json();
+    if (!res.ok) {
+      console.error("Sanity error:", JSON.stringify(result));
+      throw new Error(result.error?.description || "Sanity save failed");
+    }
+
+    return jsonRes({ _id: result.results?.[0]?.id, title: doc.title });
+  } catch (err) {
+    console.error("Generate error:", err);
+    return jsonRes({ error: err.message || "Generation failed" }, 500);
+  }
 };
 
 export const config = {

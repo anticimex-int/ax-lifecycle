@@ -869,45 +869,20 @@ async function generatePersona(){
   if(!prompt){status.className='gen-status error';status.textContent='Please describe a persona.';return}
   btn.disabled=true;
   status.className='gen-status loading';
-  status.innerHTML='<span class="gen-spinner"></span>Generating persona journey...';
+  status.innerHTML='<span class="gen-spinner"></span>Generating persona journey \u2014 this can take up to a minute...';
   try{
     const res=await fetch('/.netlify/functions/generate',{
       method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({prompt,passphrase:pass})
     });
-    // Check for non-SSE error responses (passphrase, validation)
-    const ct=res.headers.get('content-type')||'';
-    if(ct.includes('application/json')){
-      const data=await res.json();
+    let data;
+    try{data=await res.json()}catch{throw new Error('Server error (status '+res.status+'). Please try again.')}
+    if(!res.ok){
       if(res.status===403){sessionStorage.removeItem('acx_pass');document.getElementById('genPass').style.display='flex';document.getElementById('genAuthed').classList.remove('visible');document.getElementById('genForm').classList.remove('visible')}
       throw new Error(data.error||'Generation failed');
     }
-    // Parse SSE stream
-    const reader=res.body.getReader();
-    const decoder=new TextDecoder();
-    let buf='';
-    while(true){
-      const{done,value}=await reader.read();
-      if(done)break;
-      buf+=decoder.decode(value,{stream:true});
-      const lines=buf.split('\n');
-      buf=lines.pop();
-      let event='';
-      for(const line of lines){
-        if(line.startsWith('event: '))event=line.slice(7);
-        else if(line.startsWith('data: ')){
-          const d=JSON.parse(line.slice(6));
-          if(event==='progress'){status.innerHTML='<span class="gen-spinner"></span>'+d.message}
-          else if(event==='done'){
-            status.className='gen-status success';status.textContent='Persona generated! Redirecting...';
-            setTimeout(()=>{window.location.href='persona.html?id='+encodeURIComponent(d._id)},500);
-            return;
-          }
-          else if(event==='error'){throw new Error(d.error)}
-        }
-      }
-    }
-    throw new Error('Stream ended without result. Please refresh and check the gallery.');
+    status.className='gen-status success';status.textContent='Persona generated! Redirecting...';
+    setTimeout(()=>{window.location.href='persona.html?id='+encodeURIComponent(data._id)},500);
   }catch(err){
     status.className='gen-status error';status.textContent=err.message;btn.disabled=false;
   }

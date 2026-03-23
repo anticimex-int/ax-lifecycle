@@ -823,7 +823,7 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
 
 // Persona generator
 let SANITY_PROJECT='',SANITY_DATASET='';
-fetch('/.netlify/functions/config').then(r=>r.json()).then(c=>{SANITY_PROJECT=c.projectId;SANITY_DATASET=c.dataset;loadGallery()});
+fetch('/.netlify/functions/config').then(r=>{if(!r.ok)throw new Error(r.status);return r.json()}).then(c=>{SANITY_PROJECT=c.projectId;SANITY_DATASET=c.dataset;loadGallery()}).catch(e=>console.error('Config load failed:',e));
 
 function verifyPass(){
   const pass=document.getElementById('passInput').value.trim();

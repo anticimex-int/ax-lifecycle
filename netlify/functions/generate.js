@@ -1,5 +1,26 @@
+const crypto = require("crypto");
 const Anthropic = require("@anthropic-ai/sdk");
 const { createClient } = require("@sanity/client");
+
+function addKeys(obj) {
+  if (Array.isArray(obj)) {
+    return obj.map((item) => {
+      if (item && typeof item === "object" && !Array.isArray(item)) {
+        const keyed = item._key ? item : { _key: crypto.randomUUID().slice(0, 8), ...item };
+        return addKeys(keyed);
+      }
+      return item;
+    });
+  }
+  if (obj && typeof obj === "object") {
+    const out = {};
+    for (const [k, v] of Object.entries(obj)) {
+      out[k] = addKeys(v);
+    }
+    return out;
+  }
+  return obj;
+}
 
 const sanity = createClient({
   projectId: process.env.SANITY_PROJECT_ID,
@@ -186,7 +207,7 @@ exports.handler = async (event) => {
         .slice(0, 96),
     };
 
-    const doc = await sanity.create(persona);
+    const doc = await sanity.create(addKeys(persona));
 
     return {
       statusCode: 200,

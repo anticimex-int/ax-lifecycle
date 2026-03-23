@@ -171,6 +171,9 @@ exports.handler = async (event) => {
 
     persona._type = "persona";
     persona.prompt = prompt.trim();
+    if (typeof persona.slug === "string") {
+      persona.slug = { _type: "slug", current: persona.slug };
+    }
 
     const doc = await sanity.create(persona);
 

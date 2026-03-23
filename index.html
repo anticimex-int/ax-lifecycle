@@ -71,16 +71,34 @@ section{position:relative;padding:6rem 2.5rem;scroll-margin-top:4.5rem}
 #hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:4.5rem;background:var(--white);clip-path:polygon(100% 0,0 100%,100% 100%)}
 .hero-bg{position:absolute;inset:0;background:linear-gradient(160deg,var(--blue-20) 0%,var(--blue-30) 40%,#1038a0 100%)}
 .hero-accent{position:absolute;top:5%;right:0;width:50vw;height:50vw;border-radius:50%;background:radial-gradient(circle,rgba(30,214,140,.08) 0%,rgba(24,126,224,.04) 40%,transparent 65%);pointer-events:none}
-.hero-content{position:relative;z-index:2;max-width:740px}
-.hero-badge{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.15em;color:rgba(255,255,255,.6);margin-bottom:2.5rem;display:flex;align-items:center;gap:.75rem}
-.hero-badge::before{content:'';width:24px;height:1px;background:rgba(255,255,255,.35)}
-h1.hero-title{font-size:clamp(2.5rem,5.5vw,4rem);font-weight:700;line-height:1.08;letter-spacing:-.025em;margin-bottom:1.5rem;color:var(--white)}
+.hero-content{position:relative;z-index:2;max-width:860px;text-align:center}
+.hero-badge{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.15em;color:rgba(255,255,255,.45);margin-bottom:2rem;display:inline-flex;align-items:center;gap:.75rem}
+.hero-badge::before,.hero-badge::after{content:'';width:24px;height:1px;background:rgba(255,255,255,.25)}
+h1.hero-title{font-size:clamp(2.5rem,5.5vw,4rem);font-weight:700;line-height:1.08;letter-spacing:-.025em;margin-bottom:1.25rem;color:var(--white)}
 h1.hero-title em{font-style:normal;color:var(--green-70)}
-.hero-desc{font-size:1.1rem;color:rgba(255,255,255,.78);max-width:580px;line-height:1.8;margin-bottom:3rem}
-.hero-meta{display:flex;gap:3rem;flex-wrap:wrap}
-.hero-meta-item{border-left:1px solid rgba(255,255,255,.2);padding-left:1rem}
-.hero-meta-item .val{font-size:1.8rem;font-weight:700;line-height:1;color:var(--white)}
-.hero-meta-item .label{font-size:.7rem;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.08em;margin-top:.3rem}
+.hero-desc{font-size:1.15rem;color:rgba(255,255,255,.55);max-width:600px;line-height:1.7;margin:0 auto 3rem}
+
+/* PROMPT */
+.persona-prompt{max-width:680px;margin:0 auto;text-align:left}
+.prompt-input-wrap{position:relative;display:flex;align-items:center;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.14);border-radius:.75rem;padding:.35rem .35rem .35rem 1.5rem;transition:border-color .25s var(--ease),background .25s var(--ease),box-shadow .25s var(--ease)}
+.prompt-input-wrap:focus-within{border-color:var(--green-70);background:rgba(255,255,255,.1);box-shadow:0 0 0 4px rgba(30,214,140,.08),0 20px 60px -15px rgba(0,0,0,.3)}
+.prompt-input-wrap input{flex:1;padding:1.1rem 0;border:none;background:transparent;color:var(--white);font-family:var(--font);font-size:1.15rem;outline:none;line-height:1.5;min-width:0}
+.prompt-input-wrap input::placeholder{color:rgba(255,255,255,.3)}
+.prompt-input-wrap button{padding:.85rem 1.75rem;border:none;border-radius:.5rem;background:var(--green-70);color:var(--blue-10);font-family:var(--font);font-size:.95rem;font-weight:700;cursor:pointer;transition:all .2s var(--ease);white-space:nowrap;flex-shrink:0}
+.prompt-input-wrap button:hover{background:#17c47e;transform:translateY(-1px);box-shadow:0 4px 20px rgba(30,214,140,.3)}
+.prompt-input-wrap button:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+.prompt-input-wrap--locked{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.1)}
+.prompt-input-wrap--locked button{background:rgba(255,255,255,.1);color:rgba(255,255,255,.65)}
+.prompt-input-wrap--locked button:hover{background:rgba(255,255,255,.18);color:var(--white);box-shadow:none;transform:none}
+.prompt-lock-icon{width:18px;height:18px;stroke:rgba(255,255,255,.3);fill:none;stroke-width:2;flex-shrink:0;margin-right:.5rem}
+.prompt-authed{display:none;align-items:center;gap:.4rem;font-size:.8rem;color:var(--green-70);margin-bottom:.75rem;justify-content:center}
+.prompt-authed.visible{display:flex}
+.prompt-main{display:none}
+.prompt-main.visible{display:block}
+.prompt-hints{margin-top:.75rem;font-size:.82rem;color:rgba(255,255,255,.35);text-align:center}
+.prompt-hint-cycle{color:rgba(255,255,255,.55);font-weight:600;display:inline-block;transition:opacity .3s var(--ease),transform .3s var(--ease)}
+.hero-stats{display:flex;align-items:center;justify-content:center;gap:1rem;margin-top:3.5rem;font-size:.75rem;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.08em;font-weight:700}
+.hero-stats-dot{width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,.2)}
 .scroll-cue{position:absolute;bottom:7rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.5rem;color:rgba(255,255,255,.4);font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.18em}
 .scroll-cue::after{content:'';width:1px;height:28px;background:linear-gradient(to bottom,rgba(255,255,255,.45),transparent);animation:pulse 2s ease-in-out infinite}
 @keyframes pulse{0%,100%{opacity:.2;transform:scaleY(.7)}50%{opacity:1;transform:scaleY(1)}}
@@ -183,7 +201,8 @@ h1.hero-title em{font-style:normal;color:var(--green-70)}
 .gcol li::before{content:'';width:6px;min-width:6px;height:2px;border-radius:1px;flex-shrink:0;transform:translateY(-.25em)}
 .gcol.std li::before{background:var(--blue-60)}
 .gcol.lcl li::before{background:var(--green-70)}
-.gov-layers{display:flex;gap:1rem;margin-top:1.5rem;flex-wrap:wrap}
+.gov-heading{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--text-secondary);margin-top:2.5rem;margin-bottom:1rem}
+.gov-layers{display:flex;gap:1rem;flex-wrap:wrap}
 .gov-layer{flex:1;min-width:200px;text-align:center;padding:1.5rem 1rem;border-radius:.375rem;border:1px solid var(--blue-95);background:var(--blue-100)}
 .gov-layer .num{font-size:1.8rem;font-weight:700;line-height:1;margin-bottom:.35rem;color:var(--blue-20)}
 .gov-layer .label{font-size:.85rem;color:var(--text-secondary)}
@@ -231,30 +250,12 @@ h1.hero-title em{font-style:normal;color:var(--green-70)}
 .risk li::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--green-70);flex-shrink:0;transform:translateY(-.1em)}
 
 /* PERSONA GENERATOR */
-.persona-gen{margin-top:3rem;padding:2rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:.5rem;max-width:580px}
-.persona-gen h3{font-size:1rem;font-weight:700;color:var(--white);margin-bottom:.75rem}
-.persona-gen p{font-size:.88rem;color:rgba(255,255,255,.6);margin-bottom:1rem;line-height:1.6}
-.gen-passphrase{display:flex;gap:.5rem;margin-bottom:1rem}
-.gen-passphrase input{flex:1;padding:.6rem .9rem;border:1.5px solid rgba(255,255,255,.15);border-radius:.375rem;background:rgba(255,255,255,.06);color:var(--white);font-family:var(--font);font-size:.88rem;outline:none;transition:border-color .2s}
-.gen-passphrase input:focus{border-color:var(--green-70)}
-.gen-passphrase button{padding:.6rem 1.25rem;border:none;border-radius:.375rem;background:rgba(255,255,255,.12);color:rgba(255,255,255,.7);font-family:var(--font);font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap}
-.gen-passphrase button:hover{background:rgba(255,255,255,.2);color:var(--white)}
-.gen-form{display:none;gap:.5rem}
-.gen-form.visible{display:flex}
-.gen-form input{flex:1;padding:.6rem .9rem;border:1.5px solid rgba(255,255,255,.15);border-radius:.375rem;background:rgba(255,255,255,.06);color:var(--white);font-family:var(--font);font-size:.88rem;outline:none;transition:border-color .2s}
-.gen-form input::placeholder{color:rgba(255,255,255,.3)}
-.gen-form input:focus{border-color:var(--green-70)}
-.gen-form button{padding:.6rem 1.5rem;border:none;border-radius:.375rem;background:var(--green-70);color:var(--blue-10);font-family:var(--font);font-size:.88rem;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap}
-.gen-form button:hover{background:var(--green-50);color:var(--white)}
-.gen-form button:disabled{opacity:.5;cursor:not-allowed}
-.gen-status{font-size:.82rem;margin-top:.75rem;line-height:1.5}
+.gen-status{font-size:.88rem;margin-top:.75rem;line-height:1.5;text-align:center}
 .gen-status.error{color:#ff6b6b}
 .gen-status.success{color:var(--green-70)}
 .gen-status.loading{color:rgba(255,255,255,.6)}
 .gen-spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.2);border-top-color:var(--green-70);border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:.5rem}
 @keyframes spin{to{transform:rotate(360deg)}}
-.gen-authed{display:none;font-size:.78rem;color:var(--green-70);margin-bottom:.75rem}
-.gen-authed.visible{display:block}
 
 /* PERSONA GALLERY */
 #persona-gallery{scroll-margin-top:4.5rem}
@@ -297,9 +298,12 @@ footer p{font-size:.72rem;color:rgba(255,255,255,.3)}
   section{padding:3.5rem 1.25rem;scroll-margin-top:3.5rem}
   .seg-grid,.ops-grid,.kpi-grid,.risk-grid{grid-template-columns:1fr}
   .rm-grid{grid-template-columns:1fr}
-  .hero-meta{gap:1.5rem}
-  .hero-meta-item .val{font-size:1.4rem}
   h1.hero-title{font-size:2rem}
+  .hero-desc{font-size:1rem;margin-bottom:2rem}
+  .prompt-input-wrap{flex-direction:column;padding:1rem;gap:.75rem;border-radius:.625rem}
+  .prompt-input-wrap input{font-size:1rem;padding:.5rem 0;width:100%}
+  .prompt-input-wrap button{width:100%;justify-content:center;padding:.85rem;border-radius:.375rem}
+  .hero-stats{flex-wrap:wrap;gap:.5rem .75rem;margin-top:2.5rem}
   .panel-grid{grid-template-columns:1fr}
   .panel-header{grid-template-columns:1fr;gap:1rem;padding:1.5rem}
   .panel-header::before{display:none}
@@ -340,35 +344,38 @@ footer p{font-size:.72rem;color:rgba(255,255,255,.3)}
   <div class="hero-bg"></div>
   <div class="hero-accent"></div>
   <div class="container hero-content">
-    <div class="hero-badge reveal">Anticimex Group &mdash; Strategic Operating Document</div>
+    <div class="hero-badge reveal">Anticimex Customer Lifecycle</div>
     <h1 class="hero-title reveal d1">The customer lifecycle is Anticimex&rsquo;s <em>operating system</em></h1>
-    <p class="hero-desc reveal d2">An end-to-end customer lifecycle plan designed for decentralized execution across residential, commercial, and multi-site enterprise customers &mdash; with regional adaptation built in.</p>
-    <div class="hero-meta reveal d3">
-      <div class="hero-meta-item"><div class="val">234+</div><div class="label">Branches</div></div>
-      <div class="hero-meta-item"><div class="val">37</div><div class="label">Platforms</div></div>
-      <div class="hero-meta-item"><div class="val">5</div><div class="label">Lifecycle stages</div></div>
-      <div class="hero-meta-item"><div class="val">22</div><div class="label">Countries</div></div>
-    </div>
-    <div class="persona-gen reveal d4">
-      <h3>Generate a persona journey</h3>
-      <p>Describe a customer persona and AI will map their journey through Anticimex's 5-stage lifecycle.</p>
-      <div class="gen-authed" id="genAuthed">Passphrase verified</div>
-      <div class="gen-passphrase" id="genPass">
-        <input type="password" id="passInput" placeholder="Enter passphrase to unlock">
-        <button onclick="verifyPass()">Unlock</button>
+    <p class="hero-desc reveal d2">Map any customer persona through the 5-stage lifecycle with AI.</p>
+    <div class="persona-prompt reveal d3">
+      <div id="genPass">
+        <div class="prompt-input-wrap prompt-input-wrap--locked">
+          <svg class="prompt-lock-icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <input type="password" id="passInput" placeholder="Enter passphrase to unlock" aria-label="Passphrase">
+          <button onclick="verifyPass()">Unlock</button>
+        </div>
       </div>
-      <div class="gen-form" id="genForm">
-        <input type="text" id="promptInput" placeholder="e.g. Hotel chain with 50 locations across Europe">
-        <button id="genBtn" onclick="generatePersona()">Generate</button>
+      <div class="prompt-authed" id="genAuthed"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Unlocked</div>
+      <div class="prompt-main" id="genForm">
+        <div class="prompt-input-wrap">
+          <input type="text" id="promptInput" placeholder="Describe a customer persona..." aria-label="Describe a customer persona">
+          <button id="genBtn" onclick="generatePersona()">Generate</button>
+        </div>
+        <div class="prompt-hints">Try: <span class="prompt-hint-cycle" id="hintCycle">a family worried about mice in the attic</span></div>
       </div>
       <div class="gen-status" id="genStatus"></div>
+    </div>
+    <div class="hero-stats reveal d4">
+      <span>234+ branches</span><span class="hero-stats-dot"></span>
+      <span>22 countries</span><span class="hero-stats-dot"></span>
+      <span>5 lifecycle stages</span>
     </div>
   </div>
   <div class="scroll-cue">Scroll</div>
 </section>
 
 <!-- PERSONA GALLERY -->
-<section id="persona-gallery" class="bg-white">
+<section id="persona-gallery" class="bg-white angled" style="--next-bg:var(--white)">
   <div class="container">
     <div class="sn reveal">Explore</div>
     <h2 class="st reveal d1">AI-generated persona journeys</h2>
@@ -595,7 +602,8 @@ footer p{font-size:.72rem;color:rgba(255,255,255,.3)}
         <ul><li>Pest types and seasonality</li><li>Treatment regulations</li><li>Language and channels</li><li>Price points and service frequencies</li><li>Cultural expectations</li><li>Technician scripts</li><li>Claims and guarantees allowed by law</li></ul>
       </div>
     </div>
-    <div class="gov-layers reveal d3">
+    <h3 class="gov-heading reveal d3">Three governance layers</h3>
+    <div class="gov-layers reveal d4">
       <div class="gov-layer"><div class="num">1</div><div class="label">Global center of excellence</div></div>
       <div class="gov-layer"><div class="num">2</div><div class="label">Regional operating leaders (5 Regions)</div></div>
       <div class="gov-layer"><div class="num">3</div><div class="label">Platform &amp; branch execution (37 Platforms, 234+ Branches)</div></div>
@@ -906,6 +914,30 @@ async function loadGallery(){
     el.className='gallery-empty';el.textContent='Could not load personas.';
   }
 }
+
+// Cycling hint suggestions
+(function(){
+  const hints=[
+    "a family worried about mice in the attic",
+    "hotel chain with 50 locations across Europe",
+    "restaurant owner protecting a Michelin star",
+    "warehouse manager dealing with rodent compliance",
+    "property management company with 200 apartments",
+    "school district needing pest prevention across 12 campuses",
+    "organic farm requiring chemical-free pest control"
+  ];
+  const el=document.getElementById('hintCycle');
+  if(!el)return;
+  let i=0;
+  setInterval(()=>{
+    el.style.opacity='0';el.style.transform='translateY(4px)';
+    setTimeout(()=>{
+      i=(i+1)%hints.length;
+      el.textContent=hints[i];
+      el.style.opacity='1';el.style.transform='translateY(0)';
+    },300);
+  },3500);
+})();
 </script>
 </body>
 </html>

@@ -190,15 +190,23 @@ exports.handler = async (event) => {
       }
     }
 
-    persona._type = "persona";
-    persona.prompt = prompt.trim();
+    // Only keep fields that match the Sanity persona schema
+    const ALLOWED = [
+      "title","emoji","heroTitle","heroDesc",
+      "scenarioEmoji","scenarioTitle","scenarioText",
+      "context","stages","closeStatement","metrics",
+    ];
+    const clean = { _type: "persona", prompt: prompt.trim() };
+    for (const key of ALLOWED) {
+      if (persona[key] !== undefined) clean[key] = persona[key];
+    }
 
-    // Normalize slug to Sanity format and sanitize
+    // Normalize slug
     const rawSlug =
       typeof persona.slug === "string"
         ? persona.slug
         : persona.slug?.current || persona.title || "persona";
-    persona.slug = {
+    clean.slug = {
       _type: "slug",
       current: rawSlug
         .toLowerCase()
@@ -207,7 +215,7 @@ exports.handler = async (event) => {
         .slice(0, 96),
     };
 
-    const doc = await sanity.create(addKeys(persona));
+    const doc = await sanity.create(addKeys(clean));
 
     return {
       statusCode: 200,
@@ -219,9 +227,12 @@ exports.handler = async (event) => {
       }),
     };
   } catch (err) {
-    console.error("Generation error:", err);
+    console.error("Generation error:", JSON.stringify(err, Object.getOwnPropertyNames(err), 2));
     const message =
+      err?.response?.body?.error?.items?.[0]?.message ||
       err?.response?.body?.error?.description ||
+      err?.response?.body?.message ||
+      err?.statusCode ? `Sanity error ${err.statusCode}: ${err.message}` :
       err?.message ||
       "Failed to generate persona. Please try again.";
     return {

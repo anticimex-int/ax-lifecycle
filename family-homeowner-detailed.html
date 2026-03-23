@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anticimex — Family Homeowner Journey (Detailed)</title>
+<style>
+@font-face{font-family:'Anticimex Sans';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/AnticimexSans-Regular.woff2) format('woff2')}
+@font-face{font-family:'Anticimex Sans';font-style:normal;font-weight:700;font-display:swap;src:url(fonts/AnticimexSans-Bold.woff2) format('woff2')}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --blue-10:#000f3b;--blue-20:#051e66;--blue-30:#0d2b88;
+  --blue-60:#0862b7;--blue-70:#187ee0;--blue-80:#41a2ff;
+  --blue-90:#d2dbe3;--blue-95:#d9ecff;--blue-100:#f8fbfe;
+  --green-50:#2da96b;--green-70:#1ed68c;--green-90:#bff6db;--green-100:#f8fffc;
+  --orange-40:#ff7c00;--orange-90:#feead9;
+  --red-50:#e92525;--red-90:#f1d2d2;
+  --neutral-40:#767676;--neutral-90:#f2f2f2;--neutral-95:#f6f6f6;--white:#fff;
+  --text:rgba(0,0,0,.85);--text-secondary:#4a5568;
+  --shadow:0 24px 64px -24px rgba(0,0,0,.08);
+  --font:'Anticimex Sans',ui-sans-serif,system-ui,sans-serif;
+  --ease:cubic-bezier(.4,0,.2,1);
+}
+html{scroll-behavior:smooth;scrollbar-width:thin;scrollbar-color:var(--blue-90) var(--white)}
+body{font-family:var(--font);background:var(--white);color:var(--text);line-height:1.7;overflow-x:hidden;-webkit-font-smoothing:antialiased;font-size:16px}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--white)}::-webkit-scrollbar-thumb{background:var(--blue-90);border-radius:3px}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;height:4.5rem;display:flex;align-items:center;justify-content:space-between;padding:0 2.5rem;
+  background:var(--white);border-bottom:1px solid var(--blue-95);transition:box-shadow .3s var(--ease)}
+nav.scrolled{box-shadow:var(--shadow)}
+.nav-logo{display:flex;align-items:center;gap:.75rem}
+.nav-logo img{height:1.6rem;width:auto}
+.nav-logo .doc-type{font-weight:400;font-size:.7rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-secondary);padding-left:.75rem;border-left:1px solid var(--blue-90)}
+.back-link{font-size:.82rem;font-weight:700;color:var(--blue-60);text-decoration:none;display:flex;align-items:center;gap:.4rem;transition:color .2s}
+.back-link:hover{color:var(--blue-20)}
+
+/* LAYOUT */
+section{position:relative;padding:6rem 2.5rem;scroll-margin-top:4.5rem}
+.container{max-width:1000px;margin:0 auto}
+.angled{padding-bottom:9rem}
+.angled::before{content:'';position:absolute;bottom:0;left:0;right:0;height:4.5rem;z-index:4;
+  background:linear-gradient(to bottom right,transparent calc(50% - 1px),var(--blue-90) calc(50% - 1px),var(--blue-90) 50%,transparent 50%);pointer-events:none}
+.angled::after{content:'';position:absolute;bottom:0;left:0;right:0;height:4.5rem;z-index:3;
+  background:var(--next-bg,var(--white));clip-path:polygon(100% 0,0 100%,100% 100%)}
+.bg-white{background:var(--white)}
+.bg-blue{background:var(--blue-100)}
+.bg-green{background:var(--green-100)}
+.bg-navy{background:var(--blue-30);color:var(--white)}
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .6s var(--ease),transform .6s var(--ease)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.d1{transition-delay:.08s}.d2{transition-delay:.16s}.d3{transition-delay:.24s}.d4{transition-delay:.32s}
+
+/* HERO */
+#hero{min-height:90vh;display:flex;align-items:center;padding-top:7rem;padding-bottom:9rem;background:var(--blue-30);color:var(--white);position:relative;overflow:hidden}
+#hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:4.5rem;background:var(--white);clip-path:polygon(100% 0,0 100%,100% 100%)}
+.hero-bg{position:absolute;inset:0;background:linear-gradient(160deg,var(--blue-20) 0%,var(--blue-30) 40%,#1038a0 100%)}
+.hero-accent{position:absolute;top:5%;right:0;width:50vw;height:50vw;border-radius:50%;background:radial-gradient(circle,rgba(30,214,140,.08) 0%,rgba(24,126,224,.04) 40%,transparent 65%);pointer-events:none}
+.hero-content{position:relative;z-index:2;max-width:700px}
+.hero-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.15em;color:rgba(255,255,255,.6);margin-bottom:.75rem}
+.hero-persona{font-size:.85rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--green-70);margin-bottom:1.5rem;
+  display:inline-flex;align-items:center;gap:.6rem;padding:.45rem 1.1rem;border:1.5px solid rgba(30,214,140,.35);border-radius:9999px;background:rgba(30,214,140,.08)}
+h1.hero-title{font-size:clamp(2.2rem,5vw,3.5rem);font-weight:700;line-height:1.12;letter-spacing:-.02em;margin-bottom:1.5rem;color:var(--white)}
+h1.hero-title em{font-style:normal;color:var(--green-70)}
+.hero-desc{font-size:1.1rem;color:rgba(255,255,255,.78);max-width:580px;line-height:1.8;margin-bottom:2.5rem}
+.hero-profile{display:grid;grid-template-columns:auto 1fr;gap:1.5rem;padding:1.5rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:.5rem;max-width:520px}
+.hero-profile-icon{width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:1.5rem}
+.hero-profile-details{display:grid;gap:.25rem}
+.hero-profile-details h3{font-size:1rem;font-weight:700;color:var(--white)}
+.hero-profile-details p{font-size:.88rem;color:rgba(255,255,255,.65);line-height:1.55}
+
+/* PERSONA CONTEXT */
+.context-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem}
+.context-card{padding:1.75rem;border:1px solid var(--blue-95);border-radius:.5rem;background:var(--white)}
+.context-card h3{font-size:1rem;font-weight:700;color:var(--blue-20);margin-bottom:.5rem}
+.context-card p{font-size:.9rem;color:var(--text-secondary);line-height:1.65}
+.context-card ul{list-style:none;margin-top:.5rem}
+.context-card li{font-size:.9rem;color:var(--text);padding:.25rem 0;display:flex;align-items:baseline;gap:.6rem;line-height:1.6}
+.context-card li::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--green-70);flex-shrink:0;transform:translateY(-.1em)}
+
+/* JOURNEY TIMELINE */
+.journey-stage{display:grid;grid-template-columns:80px 1fr;gap:2.5rem;position:relative;padding-bottom:3.5rem}
+.journey-stage:last-child{padding-bottom:0}
+.journey-stage:not(:last-child)::before{content:'';position:absolute;left:39px;top:60px;bottom:0;width:2px;background:var(--blue-95)}
+.stage-marker{display:flex;flex-direction:column;align-items:center;gap:.5rem}
+.stage-dot{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:var(--white);position:relative;z-index:1}
+.stage-label{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-secondary);text-align:center;white-space:nowrap}
+.stage-content{padding-top:.25rem}
+.stage-content h2{font-size:1.4rem;font-weight:700;color:var(--blue-20);margin-bottom:.15rem;line-height:1.25}
+.stage-subtitle{font-size:.88rem;color:var(--text-secondary);margin-bottom:1.25rem;font-style:italic}
+
+/* Stage inner cards */
+.stage-cards{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.s-card{padding:1.5rem;border:1px solid var(--blue-95);border-radius:.5rem;background:var(--white);transition:border-color .2s,box-shadow .3s}
+.s-card:hover{border-color:var(--blue-90);box-shadow:var(--shadow)}
+.s-card.full{grid-column:1/-1}
+.s-card.highlight{background:var(--blue-100);border-color:var(--blue-95)}
+.s-card.action{background:var(--green-100);border-color:rgba(30,214,140,.2)}
+.s-card h4{font-size:.88rem;font-weight:700;color:var(--blue-20);margin-bottom:.5rem;display:flex;align-items:center;gap:.5rem}
+.s-card h4 .icon{font-size:1rem;line-height:1}
+.s-card p{font-size:.88rem;color:var(--text-secondary);line-height:1.65}
+.s-card ul{list-style:none;margin-top:.35rem}
+.s-card li{font-size:.88rem;color:var(--text);padding:.25rem 0;display:flex;align-items:baseline;gap:.6rem;line-height:1.6}
+.s-card li::before{content:'';width:5px;height:5px;border-radius:50%;flex-shrink:0;transform:translateY(-.1em)}
+.s-card li::before{background:var(--green-70)}
+.s-card.highlight li::before{background:var(--blue-60)}
+
+/* Customer perspective grid */
+.perspective{display:grid;grid-template-columns:repeat(5,1fr);gap:.75rem;margin-top:1.25rem;margin-bottom:1.25rem}
+.persp-col{padding:1.25rem;border-radius:.5rem;border:1px solid var(--blue-95);background:var(--white)}
+.persp-header{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.65rem;padding-bottom:.5rem;border-bottom:2px solid;display:flex;align-items:center;gap:.4rem}
+.persp-col.feelings .persp-header{color:#8b5cf6;border-color:#8b5cf6}
+.persp-col.actions .persp-header{color:var(--blue-60);border-color:var(--blue-60)}
+.persp-col.interactions .persp-header{color:var(--green-50);border-color:var(--green-50)}
+.persp-col.painpoints .persp-header{color:var(--red-50);border-color:var(--red-50)}
+.persp-col.improvements .persp-header{color:var(--orange-40);border-color:var(--orange-40)}
+.persp-col ul{list-style:none}
+.persp-col li{font-size:.82rem;color:var(--text);padding:.2rem 0;line-height:1.55;display:flex;align-items:baseline;gap:.5rem}
+.persp-col li::before{content:'';width:4px;height:4px;border-radius:50%;flex-shrink:0;transform:translateY(-.1em)}
+.persp-col.feelings li::before{background:#8b5cf6}
+.persp-col.actions li::before{background:var(--blue-60)}
+.persp-col.interactions li::before{background:var(--green-50)}
+.persp-col.painpoints li::before{background:var(--red-50)}
+.persp-col.improvements li::before{background:var(--orange-40)}
+
+/* Quote callout */
+.quote{padding:1.25rem 1.5rem;border-radius:.5rem;border-left:3px solid;background:var(--blue-100);margin-top:1.25rem;margin-bottom:1rem}
+.quote p{font-size:.95rem;font-style:italic;color:var(--blue-20);line-height:1.6}
+.quote .attribution{font-size:.78rem;font-style:normal;color:var(--text-secondary);margin-top:.35rem}
+
+/* Outcome strip */
+.outcome{margin-top:1rem;padding:1rem 1.25rem;border-radius:.5rem;background:var(--green-100);border:1px solid rgba(30,214,140,.15);display:flex;align-items:flex-start;gap:.6rem}
+.outcome::before{content:'';width:20px;height:20px;border-radius:50%;background:rgba(30,214,140,.15);border:1.5px solid var(--green-70);flex-shrink:0;margin-top:1px;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' stroke='%232da96b' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");background-size:11px;background-repeat:no-repeat;background-position:center}
+.outcome p{font-size:.88rem;color:var(--green-50);font-weight:700;line-height:1.55}
+
+/* CLOSE */
+#close{padding:5rem 2.5rem 6rem}
+.close-statement{font-size:clamp(1.15rem,2.2vw,1.5rem);font-weight:700;line-height:1.45;color:rgba(255,255,255,.85);max-width:700px;margin-bottom:2rem}
+.close-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-top:2rem}
+.metric{text-align:center;padding:1.25rem;border:1px solid rgba(255,255,255,.12);border-radius:.5rem;background:rgba(255,255,255,.06)}
+.metric .val{font-size:1.8rem;font-weight:700;color:var(--white);line-height:1}
+.metric .lbl{font-size:.72rem;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.06em;margin-top:.3rem}
+
+footer{background:var(--blue-20);padding:1.5rem 2.5rem;text-align:center}
+footer p{font-size:.72rem;color:rgba(255,255,255,.3)}
+footer a{color:rgba(255,255,255,.5);text-decoration:none}
+footer a:hover{color:rgba(255,255,255,.7)}
+
+@media(max-width:1024px){
+  .context-grid{grid-template-columns:1fr 1fr}
+  .close-metrics{grid-template-columns:repeat(2,1fr)}
+  .perspective{grid-template-columns:repeat(3,1fr)}
+  .angled::before,.angled::after{height:3rem}
+  .angled{padding-bottom:7rem}
+  #hero::after{height:3rem}
+  #hero{padding-bottom:7rem}
+}
+@media(max-width:768px){
+  section{padding:3.5rem 1.25rem;scroll-margin-top:3.5rem}
+  .context-grid,.stage-cards,.perspective{grid-template-columns:1fr}
+  .s-card.full{grid-column:auto}
+  .close-metrics{grid-template-columns:1fr 1fr}
+  .journey-stage{grid-template-columns:50px 1fr;gap:1.25rem}
+  .journey-stage:not(:last-child)::before{left:24px}
+  .stage-dot{width:32px;height:32px;font-size:.65rem}
+  h1.hero-title{font-size:2rem}
+  .hero-profile{grid-template-columns:1fr}
+  nav{height:3.5rem;padding:0 1.25rem}
+  section{scroll-margin-top:3.5rem}
+  .angled::before,.angled::after{height:2rem}
+  .angled{padding-bottom:5rem}
+  #hero::after{height:2rem}
+  #hero{padding-bottom:5rem}
+}
+</style>
+</head>
+<body>
+
+<nav id="mainNav">
+  <div class="nav-logo"><img src="anticimex-logo.png" alt="Anticimex"> <span class="doc-type">Detailed Customer Journey</span></div>
+  <a href="family-homeowner.html" class="back-link">&larr; Back to Journey Summary</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-accent"></div>
+  <div class="container hero-content">
+    <div class="hero-label reveal">Customer Journey Map</div>
+    <div class="hero-persona reveal d1">Family Homeowner</div>
+    <h1 class="hero-title reveal d2">From rodent <em>panic</em> to long-term <em>prevention</em></h1>
+    <p class="hero-desc reveal d3">How the Anticimex lifecycle transforms a stressed family into a confident, protected household &mdash; with detailed customer perspective: feelings, actions, interactions, painpoints, and improvements at every stage.</p>
+    <div class="hero-profile reveal d4">
+      <div class="hero-profile-icon">&#127968;</div>
+      <div class="hero-profile-details">
+        <h3>The scenario</h3>
+        <p>A homeowner with two young children and a dog has noticed signs of rodents. The situation is causing stress and concern about hygiene and safety. They want it solved quickly, but need confidence the solution is safe for their family.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PERSONA CONTEXT -->
+<section id="context" class="bg-white angled" style="--next-bg:var(--blue-100);padding-top:8rem">
+  <div class="container">
+    <div class="context-grid">
+      <div class="context-card reveal d1">
+        <h3>Emotional state</h3>
+        <ul>
+          <li>Anxious about children&rsquo;s health</li>
+          <li>Worried about contamination in the kitchen</li>
+          <li>Concerned the dog might encounter poison</li>
+          <li>Embarrassed &mdash; feels like a cleanliness failure</li>
+          <li>Urgency: wants this resolved today, not next week</li>
+        </ul>
+      </div>
+      <div class="context-card reveal d2">
+        <h3>What they need</h3>
+        <ul>
+          <li>Fast response from someone local</li>
+          <li>Clear explanation of what&rsquo;s happening</li>
+          <li>Reassurance that treatment is family-safe</li>
+          <li>Visible results quickly</li>
+          <li>A plan so this doesn&rsquo;t happen again</li>
+        </ul>
+      </div>
+      <div class="context-card reveal d3">
+        <h3>Decision drivers</h3>
+        <ul>
+          <li>Trust: reviews, certifications, local reputation</li>
+          <li>Safety: child-safe, pet-safe methods</li>
+          <li>Speed: can someone come today or tomorrow?</li>
+          <li>Clarity: what will it cost, what will you do?</li>
+          <li>Prevention: will this stop it from recurring?</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- JOURNEY -->
+<section id="journey" class="bg-blue angled" style="--next-bg:var(--white);padding-top:8rem;padding-bottom:12rem">
+  <div class="container">
+
+    <!-- STAGE 1: AWARENESS -->
+    <div class="journey-stage reveal">
+      <div class="stage-marker">
+        <div class="stage-dot" style="background:#6366f1">01</div>
+        <div class="stage-label">Awareness</div>
+      </div>
+      <div class="stage-content">
+        <h2>Something is wrong</h2>
+        <p class="stage-subtitle">&ldquo;I heard scratching in the walls last night. There are droppings under the kitchen sink.&rdquo;</p>
+        <div class="stage-cards">
+          <div class="s-card">
+            <h4><span class="icon">&#128270;</span> How they find Anticimex</h4>
+            <ul>
+              <li>Searches &ldquo;rodent control near me&rdquo; or &ldquo;safe pest control for families&rdquo;</li>
+              <li>Sees Anticimex in local map results with strong reviews</li>
+              <li>Reads a seasonal pest alert article about rodent prevention</li>
+              <li>Neighbor or local parent group recommends Anticimex</li>
+            </ul>
+          </div>
+          <div class="s-card highlight">
+            <h4><span class="icon">&#9989;</span> What builds trust</h4>
+            <ul>
+              <li>Branch-level Google reviews mentioning family-safe service</li>
+              <li>Clear &ldquo;safe for children and pets&rdquo; messaging on the website</li>
+              <li>Visible technician credentials and certifications</li>
+              <li>Local branch presence &mdash; not a faceless national call center</li>
+            </ul>
+          </div>
+        </div>
+        <div class="quote" style="border-color:#6366f1">
+          <p>&ldquo;I was up at 2am googling with the kitchen light on, checking every corner. I just kept thinking &mdash; the kids eat breakfast right there. I needed someone I could trust, and I needed them fast.&rdquo;</p>
+        </div>
+        <div class="perspective">
+          <div class="persp-col feelings"><div class="persp-header">Feelings</div><ul><li>Panic and disgust at the droppings</li><li>Fear for children&rsquo;s health</li><li>Shame &mdash; feels like a cleanliness failure</li><li>Urgency: this can&rsquo;t wait</li></ul></div>
+          <div class="persp-col actions"><div class="persp-header">Actions</div><ul><li>Late-night googling &ldquo;rodent control safe for kids&rdquo;</li><li>Checking under every cabinet</li><li>Asking in local parent groups online</li><li>Comparing top 3 search results</li></ul></div>
+          <div class="persp-col interactions"><div class="persp-header">Interactions</div><ul><li>Google search and map listings</li><li>Anticimex website and review pages</li><li>Local parent Facebook/WhatsApp group</li><li>Neighbor word-of-mouth</li></ul></div>
+          <div class="persp-col painpoints"><div class="persp-header">Painpoints</div><ul><li>Hard to tell who is legitimate vs generic</li><li>Most websites don&rsquo;t address family safety</li><li>No way to gauge urgency of the situation</li><li>Conflicting DIY advice online</li></ul></div>
+          <div class="persp-col improvements"><div class="persp-header">Improvements</div><ul><li>Prominent &ldquo;safe for families&rdquo; messaging on landing pages</li><li>Pest risk alerts for their specific area</li><li>Short video showing safe treatment methods</li><li>&ldquo;How urgent is this?&rdquo; self-assessment tool</li></ul></div>
+        </div>
+        <div class="outcome"><p>Anticimex appears as the trusted, local, family-safe option when they search.</p></div>
+      </div>
+    </div>
+
+    <!-- STAGE 2: CONSIDERATION -->
+    <div class="journey-stage reveal">
+      <div class="stage-marker">
+        <div class="stage-dot" style="background:#8b5cf6">02</div>
+        <div class="stage-label">Consideration</div>
+      </div>
+      <div class="stage-content">
+        <h2>Can I trust them with my home?</h2>
+        <p class="stage-subtitle">&ldquo;I need someone who understands this is about my kids&rsquo; safety, not just killing rodents.&rdquo;</p>
+        <div class="stage-cards">
+          <div class="s-card">
+            <h4><span class="icon">&#128222;</span> First contact</h4>
+            <ul>
+              <li>Calls the local branch directly &mdash; answered within 3 rings</li>
+              <li>Asks about child and pet safety before anything else</li>
+              <li>Gets clear answers, not scripted deflection</li>
+              <li>Same-day or next-morning inspection offered</li>
+            </ul>
+          </div>
+          <div class="s-card">
+            <h4><span class="icon">&#128203;</span> Evaluation</h4>
+            <ul>
+              <li>Compares Anticimex to two other providers found online</li>
+              <li>Anticimex differentiates: SMART monitoring, IPM approach, biology expertise</li>
+              <li>Transparent pricing with clear plan options</li>
+              <li>A neighbor&rsquo;s positive review on the branch listing seals it</li>
+            </ul>
+          </div>
+        </div>
+        <div class="quote" style="border-color:#8b5cf6">
+          <p>&ldquo;The other company just said they&rsquo;d put down poison. Anticimex actually asked about my kids and my dog before anything else. That&rsquo;s who I want in my house.&rdquo;</p>
+        </div>
+        <div class="perspective">
+          <div class="persp-col feelings"><div class="persp-header">Feelings</div><ul><li>Cautiously hopeful after finding Anticimex</li><li>Still anxious &mdash; needs reassurance</li><li>Skeptical of providers who seem too salesy</li><li>Relieved when safety questions are answered directly</li></ul></div>
+          <div class="persp-col actions"><div class="persp-header">Actions</div><ul><li>Calling 2&ndash;3 providers to compare</li><li>Reading branch-specific reviews</li><li>Asking &ldquo;is this safe for kids and pets?&rdquo; first</li><li>Checking pricing before committing</li></ul></div>
+          <div class="persp-col interactions"><div class="persp-header">Interactions</div><ul><li>Phone call with local branch</li><li>Website quote form or chatbot</li><li>Google reviews for the specific branch</li><li>Price comparison across providers</li></ul></div>
+          <div class="persp-col painpoints"><div class="persp-header">Painpoints</div><ul><li>Some providers don&rsquo;t answer the phone</li><li>Opaque pricing &mdash; &ldquo;we&rsquo;ll quote after inspection&rdquo;</li><li>Dismissive answers about child/pet safety</li><li>No same-day availability from competitors</li></ul></div>
+          <div class="persp-col improvements"><div class="persp-header">Improvements</div><ul><li>Instant callback guarantee when branch is busy</li><li>Transparent pricing ranges visible on website</li><li>Dedicated &ldquo;family-safe&rdquo; certification badge</li><li>Live branch availability shown online</li></ul></div>
+        </div>
+        <div class="outcome"><p>Books a same-day inspection because the branch made them feel heard and informed.</p></div>
+      </div>
+    </div>
+
+    <!-- STAGE 3: CONVERSION -->
+    <div class="journey-stage reveal">
+      <div class="stage-marker">
+        <div class="stage-dot" style="background:#0862b7">03</div>
+        <div class="stage-label">Conversion</div>
+      </div>
+      <div class="stage-content">
+        <h2>Yes, let&rsquo;s do this</h2>
+        <p class="stage-subtitle">&ldquo;I want the problem gone, and I don&rsquo;t want it back. What&rsquo;s the plan?&rdquo;</p>
+        <div class="stage-cards">
+          <div class="s-card">
+            <h4><span class="icon">&#128736;</span> The inspection</h4>
+            <ul>
+              <li>Technician arrives on time, in branded uniform</li>
+              <li>Inspects entry points, droppings, nesting signs</li>
+              <li>Explains findings in plain language, no jargon</li>
+              <li>Shows photos of entry points on their device</li>
+              <li>Identifies root cause: gap around exterior pipes</li>
+            </ul>
+          </div>
+          <div class="s-card action">
+            <h4><span class="icon">&#128196;</span> The proposal</h4>
+            <ul>
+              <li>Treatment today + quarterly prevention plan</li>
+              <li>SMART monitoring devices for ongoing detection</li>
+              <li>All methods explicitly child-safe and pet-safe</li>
+              <li>Exclusion work to seal the pipe gap entry point</li>
+              <li>Clear pricing, digital contract, e-sign on the spot</li>
+            </ul>
+          </div>
+        </div>
+        <div class="quote" style="border-color:#0862b7">
+          <p>&ldquo;He got down on his knees and showed me the gap around the pipes where they were getting in. No one else even looked there. He said &lsquo;we&rsquo;ll seal this today&rsquo; &mdash; and he did. That&rsquo;s when I knew I wanted the ongoing plan.&rdquo;</p>
+        </div>
+        <div class="perspective">
+          <div class="persp-col feelings"><div class="persp-header">Feelings</div><ul><li>Relief that a competent person is here</li><li>Cautious optimism about the plan</li><li>Price sensitivity &mdash; is recurring worth it?</li><li>Trusting the technician&rsquo;s expertise</li></ul></div>
+          <div class="persp-col actions"><div class="persp-header">Actions</div><ul><li>Walking the property with the technician</li><li>Asking questions about every finding</li><li>Reviewing the proposal and pricing</li><li>Signing the digital contract on the spot</li></ul></div>
+          <div class="persp-col interactions"><div class="persp-header">Interactions</div><ul><li>Face-to-face with technician during inspection</li><li>Digital proposal on technician&rsquo;s device</li><li>E-sign and payment processing</li><li>Scheduling confirmation</li></ul></div>
+          <div class="persp-col painpoints"><div class="persp-header">Painpoints</div><ul><li>Technical jargon in the proposal</li><li>Unsure if recurring plan is necessary vs one-time fix</li><li>Too many plan options to compare quickly</li><li>Wants treatment now, not &ldquo;after you sign&rdquo;</li></ul></div>
+          <div class="persp-col improvements"><div class="persp-header">Improvements</div><ul><li>Visual explainer: what the plan includes vs one-time</li><li>Side-by-side cost comparison over 12 months</li><li>Simpler contract language, no jargon</li><li>Start treatment during inspection when possible</li></ul></div>
+        </div>
+        <div class="outcome"><p>Signs the quarterly prevention contract with SMART monitoring. Treatment starts immediately.</p></div>
+      </div>
+    </div>
+
+    <!-- STAGE 4: ONBOARDING -->
+    <div class="journey-stage reveal">
+      <div class="stage-marker">
+        <div class="stage-dot" style="background:#1ea56f">04</div>
+        <div class="stage-label">Onboarding</div>
+      </div>
+      <div class="stage-content">
+        <h2>What happens now?</h2>
+        <p class="stage-subtitle">&ldquo;How do I prepare? Is this safe while the kids are sleeping?&rdquo;</p>
+        <div class="stage-cards">
+          <div class="s-card full">
+            <h4><span class="icon">&#128233;</span> Welcome journey &mdash; received within 1 hour of booking</h4>
+            <ul>
+              <li>Booking confirmation with technician name and photo</li>
+              <li>Preparation checklist: what to move, what to cover, where to keep the dog</li>
+              <li>Family safety guide: specifically addresses children and pet concerns</li>
+              <li>What to expect: timeline, when results become visible, follow-up schedule</li>
+              <li>SMART device setup guide &mdash; how to access the monitoring dashboard</li>
+              <li>Direct branch contact for any questions before the visit</li>
+            </ul>
+          </div>
+        </div>
+        <div class="quote" style="border-color:#1ea56f">
+          <p>&ldquo;I was worried I&rsquo;d have to empty half the house. The checklist said &lsquo;15 minutes, here&rsquo;s exactly what to do.&rsquo; They even told me where to put the dog. It felt like they&rsquo;d done this a thousand times &mdash; because they have.&rdquo;</p>
+        </div>
+        <div class="perspective">
+          <div class="persp-col feelings"><div class="persp-header">Feelings</div><ul><li>Nervous about what preparation involves</li><li>Worried about kids/dog during treatment</li><li>Slightly overwhelmed by information</li><li>Reassured by the personal technician introduction</li></ul></div>
+          <div class="persp-col actions"><div class="persp-header">Actions</div><ul><li>Reading the prep checklist</li><li>Moving items away from walls, covering food</li><li>Arranging for the dog to be out during treatment</li><li>Downloading and logging into the SMART app</li></ul></div>
+          <div class="persp-col interactions"><div class="persp-header">Interactions</div><ul><li>Welcome email with booking confirmation</li><li>Prep checklist (email + SMS)</li><li>Family safety guide PDF</li><li>SMART dashboard setup notification</li></ul></div>
+          <div class="persp-col painpoints"><div class="persp-header">Painpoints</div><ul><li>Too much information arrives at once</li><li>Unclear how long preparation actually takes</li><li>Worried about missing a step and causing a problem</li><li>SMART app setup feels like one more thing to do</li></ul></div>
+          <div class="persp-col improvements"><div class="persp-header">Improvements</div><ul><li>60-second video prep guide instead of long PDF</li><li>SMS checklist with tap-to-complete steps</li><li>Estimated prep time: &ldquo;15 minutes is all you need&rdquo;</li><li>SMART app pre-configured, just log in</li></ul></div>
+        </div>
+        <div class="outcome"><p>The family feels prepared, informed, and reassured before the technician arrives.</p></div>
+      </div>
+    </div>
+
+    <!-- STAGE 5: SERVICE DELIVERY -->
+    <div class="journey-stage reveal">
+      <div class="stage-marker">
+        <div class="stage-dot" style="background:#2da96b">05</div>
+        <div class="stage-label">Service</div>
+      </div>
+      <div class="stage-content">
+        <h2>The technician visit</h2>
+        <p class="stage-subtitle">&ldquo;They explained everything. I actually understood what they were doing and why.&rdquo;</p>
+        <div class="stage-cards">
+          <div class="s-card">
+            <h4><span class="icon">&#128736;</span> Treatment</h4>
+            <ul>
+              <li>IPM approach: traps in concealed locations, exclusion work on the pipe gap</li>
+              <li>No open poison &mdash; tamper-resistant bait stations only</li>
+              <li>SMART sensors installed in crawlspace and kitchen void</li>
+              <li>Technician walks the homeowner through every step taken</li>
+            </ul>
+          </div>
+          <div class="s-card">
+            <h4><span class="icon">&#128202;</span> Service report</h4>
+            <ul>
+              <li>Digital report sent within 1 hour of visit</li>
+              <li>Photos of entry points sealed, devices installed</li>
+              <li>Methods used &mdash; all family-safe, no hazardous chemicals</li>
+              <li>Prevention recommendations for the homeowner</li>
+              <li>Next visit date confirmed</li>
+            </ul>
+          </div>
+        </div>
+        <div class="quote" style="border-color:#2da96b">
+          <p>&ldquo;He walked me through everything &mdash; showed me the traps are in locked boxes the kids can&rsquo;t open, explained exactly what the sensors do, and sealed the gap where they were getting in. An hour later I got a report with photos of everything. First time I&rsquo;ve felt safe in my own kitchen in weeks.&rdquo;</p>
+        </div>
+        <div class="perspective">
+          <div class="persp-col feelings"><div class="persp-header">Feelings</div><ul><li>Impressed by the technician&rsquo;s thoroughness</li><li>Grateful for clear, honest explanations</li><li>Relieved that methods are family-safe</li><li>Confident the root cause was addressed</li></ul></div>
+          <div class="persp-col actions"><div class="persp-header">Actions</div><ul><li>Watching the technician work, asking questions</li><li>Checking the sealed entry points after treatment</li><li>Reading the digital service report</li><li>Logging into SMART dashboard for the first time</li></ul></div>
+          <div class="persp-col interactions"><div class="persp-header">Interactions</div><ul><li>Face-to-face walkthrough with the technician</li><li>Digital report received within 1 hour</li><li>Photos of work done on their device</li><li>SMART dashboard first login</li></ul></div>
+          <div class="persp-col painpoints"><div class="persp-header">Painpoints</div><ul><li>Wants to know exactly what chemicals were used</li><li>Not sure what to do if they see activity between visits</li><li>Service report has technical terms they don&rsquo;t understand</li><li>Uncertain when it&rsquo;s &ldquo;safe&rdquo; to let the dog back in the area</li></ul></div>
+          <div class="persp-col improvements"><div class="persp-header">Improvements</div><ul><li>Plain-language safety card: what was used and why it&rsquo;s safe</li><li>One-pager: &ldquo;What to do if you see activity&rdquo;</li><li>Report with traffic-light summary before details</li><li>Clear re-entry timeline: &ldquo;safe for pets after X hours&rdquo;</li></ul></div>
+        </div>
+        <div class="outcome"><p>Problem addressed at the root cause. Family feels safe. SMART monitoring is live.</p></div>
+      </div>
+    </div>
+
+    <!-- STAGE 6: RETENTION -->
+    <div class="journey-stage reveal">
+      <div class="stage-marker">
+        <div class="stage-dot" style="background:#1ed68c">06</div>
+        <div class="stage-label">Retention</div>
+      </div>
+      <div class="stage-content">
+        <h2>Is it actually working?</h2>
+        <p class="stage-subtitle">&ldquo;I haven&rsquo;t seen anything in weeks. Is the prevention plan still worth paying for?&rdquo;</p>
+        <div class="stage-cards">
+          <div class="s-card">
+            <h4><span class="icon">&#128200;</span> Ongoing proof of value</h4>
+            <ul>
+              <li>SMART dashboard shows zero activity &mdash; prevention is working</li>
+              <li>Quarterly visit confirms exclusion integrity</li>
+              <li>Seasonal alert: &ldquo;Rodent activity increases in autumn &mdash; your home is protected&rdquo;</li>
+              <li>Annual Prevention Report: year of data showing continued protection</li>
+            </ul>
+          </div>
+          <div class="s-card highlight">
+            <h4><span class="icon">&#128274;</span> Why they stay</h4>
+            <ul>
+              <li>Prevention Score visible on their dashboard &mdash; proof it&rsquo;s working</li>
+              <li>Peace of mind: 24/7 monitoring means no surprises</li>
+              <li>Technician knows the property and its specific risk areas</li>
+              <li>The memory of the initial stress is a strong retention driver</li>
+            </ul>
+          </div>
+        </div>
+        <div class="quote" style="border-color:#1ed68c">
+          <p>&ldquo;My husband asked why we&rsquo;re still paying when we haven&rsquo;t seen a single mouse. I showed him the dashboard &mdash; zero activity, all sensors green. That&rsquo;s exactly the point. We&rsquo;re paying so we never have to go through that again.&rdquo;</p>
+        </div>
+        <div class="perspective">
+          <div class="persp-col feelings"><div class="persp-header">Feelings</div><ul><li>Gradually forgetting the initial urgency</li><li>Questioning whether the cost is still justified</li><li>Reassured when they check the SMART dashboard</li><li>Comfortable with the recurring technician</li></ul></div>
+          <div class="persp-col actions"><div class="persp-header">Actions</div><ul><li>Checking the dashboard occasionally (less over time)</li><li>Reading seasonal risk alerts from the branch</li><li>Reviewing the annual Prevention Report</li><li>Deciding whether to renew at the renewal prompt</li></ul></div>
+          <div class="persp-col interactions"><div class="persp-header">Interactions</div><ul><li>Quarterly technician visit (familiar face)</li><li>Seasonal email alerts from the branch</li><li>SMART dashboard push notifications</li><li>Renewal communication with pricing</li></ul></div>
+          <div class="persp-col painpoints"><div class="persp-header">Painpoints</div><ul><li>Dashboard isn&rsquo;t intuitive enough to check quickly</li><li>Forgets to open the app for weeks at a time</li><li>Renewal feels automatic without a clear value recap</li><li>Not sure what the technician actually does during quarterly visits</li></ul></div>
+          <div class="persp-col improvements"><div class="persp-header">Improvements</div><ul><li>Monthly &ldquo;your home status&rdquo; push notification (one line)</li><li>Clearer Prevention Score explanation for non-technical users</li><li>Renewal conversation that highlights what was prevented</li><li>Short post-visit summary: &ldquo;here&rsquo;s what we checked today&rdquo;</li></ul></div>
+        </div>
+        <div class="outcome"><p>Renews the quarterly plan. SMART data transforms &ldquo;do I still need this?&rdquo; into &ldquo;this is clearly working.&rdquo;</p></div>
+      </div>
+    </div>
+
+    <!-- STAGE 7: EXPANSION -->
+    <div class="journey-stage reveal">
+      <div class="stage-marker">
+        <div class="stage-dot" style="background:#ff7c00">07</div>
+        <div class="stage-label">Expansion</div>
+      </div>
+      <div class="stage-content">
+        <h2>What else should we protect?</h2>
+        <p class="stage-subtitle">&ldquo;If SMART can catch rodents early, what else can it detect?&rdquo;</p>
+        <div class="stage-cards">
+          <div class="s-card">
+            <h4><span class="icon">&#128300;</span> Technician-led upsell</h4>
+            <ul>
+              <li>During quarterly visit, technician notices moisture in the crawlspace</li>
+              <li>Recommends adding crawlspace monitoring to the SMART setup</li>
+              <li>Mentions the seasonal mosquito control add-on for the garden</li>
+              <li>Suggestion feels helpful, not salesy &mdash; it&rsquo;s based on what they saw</li>
+            </ul>
+          </div>
+          <div class="s-card">
+            <h4><span class="icon">&#10133;</span> Expanded services</h4>
+            <ul>
+              <li>Adds mosquito treatment for the garden &mdash; the kids play there daily</li>
+              <li>Considers termite monitoring after learning the house is 20+ years old</li>
+              <li>Sees the value of building environment services for property health</li>
+            </ul>
+          </div>
+        </div>
+        <div class="quote" style="border-color:#ff7c00">
+          <p>&ldquo;During the spring visit, the technician said &lsquo;I noticed some moisture under the house &mdash; that can attract pests too.&rsquo; He wasn&rsquo;t trying to sell me anything. He was just telling me what he saw. That&rsquo;s why I trust him when he suggests something.&rdquo;</p>
+        </div>
+        <div class="perspective">
+          <div class="persp-col feelings"><div class="persp-header">Feelings</div><ul><li>Trusting &mdash; the technician has earned credibility</li><li>Open to suggestions from someone who knows the property</li><li>Protective of the whole home and garden</li><li>Slightly wary of being upsold</li></ul></div>
+          <div class="persp-col actions"><div class="persp-header">Actions</div><ul><li>Listening to the technician&rsquo;s recommendation during the visit</li><li>Researching mosquito control for families with kids</li><li>Comparing the cost of add-ons vs standalone services</li><li>Discussing with partner before committing</li></ul></div>
+          <div class="persp-col interactions"><div class="persp-header">Interactions</div><ul><li>In-person conversation during quarterly visit</li><li>Follow-up email with add-on details and pricing</li><li>SMART dashboard showing the new crawlspace data</li><li>Phone call with branch to confirm add-on</li></ul></div>
+          <div class="persp-col painpoints"><div class="persp-header">Painpoints</div><ul><li>Unclear what each add-on actually covers in practice</li><li>Can feel like upselling if not framed as genuine advice</li><li>Hard to justify the additional cost without clear ROI</li><li>No easy way to see what a &ldquo;complete protection&rdquo; package looks like</li></ul></div>
+          <div class="persp-col improvements"><div class="persp-header">Improvements</div><ul><li>&ldquo;Property health check&rdquo; report that naturally surfaces recommendations</li><li>Bundled pricing for multi-service: cheaper together than separate</li><li>Clear before/after framing: &ldquo;here&rsquo;s what this protects against&rdquo;</li><li>Let the customer request a full property assessment, not just be told</li></ul></div>
+        </div>
+        <div class="outcome"><p>Customer value grows organically because the technician sees the property firsthand and makes relevant recommendations.</p></div>
+      </div>
+    </div>
+
+    <!-- STAGE 8: ADVOCACY -->
+    <div class="journey-stage reveal">
+      <div class="stage-marker">
+        <div class="stage-dot" style="background:#eb7200">08</div>
+        <div class="stage-label">Advocacy</div>
+      </div>
+      <div class="stage-content">
+        <h2>Telling the neighbors</h2>
+        <p class="stage-subtitle">&ldquo;My friend asked who we used. I told her Anticimex without hesitating.&rdquo;</p>
+        <div class="stage-cards">
+          <div class="s-card">
+            <h4><span class="icon">&#11088;</span> Review</h4>
+            <p>After the successful follow-up visit, Anticimex sends a review request. The homeowner leaves a 5-star review mentioning the family-safe approach and the technician by name.</p>
+          </div>
+          <div class="s-card">
+            <h4><span class="icon">&#128172;</span> Referral</h4>
+            <p>A neighbor mentions seeing a mouse. The homeowner recommends Anticimex, shares the branch phone number, and mentions the SMART monitoring. Anticimex&rsquo;s refer-a-friend credit makes it easy.</p>
+          </div>
+        </div>
+        <div class="quote" style="border-color:#eb7200">
+          <p>&ldquo;My neighbor saw a mouse in her garage and was panicking. I just said &lsquo;call Anticimex, ask for the local branch, they&rsquo;ll come today.&rsquo; I even sent her the number. When they helped her too, I felt like I&rsquo;d genuinely done something useful.&rdquo;</p>
+        </div>
+        <div class="perspective">
+          <div class="persp-col feelings"><div class="persp-header">Feelings</div><ul><li>Proud of the choice they made</li><li>Genuinely grateful for the experience</li><li>Happy to help others avoid their initial stress</li><li>Feels like part of a community, not just a customer</li></ul></div>
+          <div class="persp-col actions"><div class="persp-header">Actions</div><ul><li>Writing a detailed 5-star review</li><li>Mentioning the technician by name</li><li>Recommending Anticimex to a neighbor with a mouse problem</li><li>Sharing the branch phone number directly</li></ul></div>
+          <div class="persp-col interactions"><div class="persp-header">Interactions</div><ul><li>Review request email after positive follow-up</li><li>Refer-a-friend link in email or app</li><li>Casual conversation with neighbors</li><li>Parent group chat recommendation</li></ul></div>
+          <div class="persp-col painpoints"><div class="persp-header">Painpoints</div><ul><li>Review request timing feels random, not tied to a positive moment</li><li>No clear incentive or acknowledgment for referring</li><li>Doesn&rsquo;t know if the referral credit was applied</li><li>Forgets the exact branch name/number to share</li></ul></div>
+          <div class="persp-col improvements"><div class="persp-header">Improvements</div><ul><li>Trigger review request right after a confirmed positive outcome</li><li>Visible referral status: &ldquo;your friend signed up, here&rsquo;s your credit&rdquo;</li><li>Shareable card with branch details and personal referral code</li><li>Thank-you message from the Branch Manager when a referral converts</li></ul></div>
+        </div>
+        <div class="outcome"><p>One satisfied family generates a 5-star review and a direct referral &mdash; the most powerful acquisition channel.</p></div>
+      </div>
+    </div>
+
+    <!-- STAGE 9: RECOVERY (if needed) -->
+    <div class="journey-stage reveal">
+      <div class="stage-marker">
+        <div class="stage-dot" style="background:#e92525">09</div>
+        <div class="stage-label">Recovery</div>
+      </div>
+      <div class="stage-content">
+        <h2>If something goes wrong</h2>
+        <p class="stage-subtitle">&ldquo;I saw droppings again. I thought this was supposed to be fixed.&rdquo;</p>
+        <div class="stage-cards">
+          <div class="s-card">
+            <h4><span class="icon">&#9888;</span> What could happen</h4>
+            <ul>
+              <li>A new entry point opens after a plumbing repair</li>
+              <li>Seasonal pressure pushes rodents to find new access routes</li>
+              <li>Customer sees signs before the SMART sensors pick it up</li>
+            </ul>
+          </div>
+          <div class="s-card action">
+            <h4><span class="icon">&#9889;</span> How Anticimex responds</h4>
+            <ul>
+              <li>Branch Manager contacted directly &mdash; no phone tree</li>
+              <li>Emergency re-service within 24 hours, included in the contract</li>
+              <li>Root cause investigation: find and seal the new entry point</li>
+              <li>Additional SMART sensor placed at the new vulnerability</li>
+              <li>Follow-up call from Branch Manager within 48 hours to confirm resolution</li>
+            </ul>
+          </div>
+        </div>
+        <div class="quote" style="border-color:#e92525">
+          <p>&ldquo;I was upset. I called the branch and the manager picked up, already knew our address, and said &lsquo;we&rsquo;ll be there tomorrow morning.&rsquo; No excuses, no extra charge. They found a new gap from the plumber&rsquo;s work and fixed it on the spot. That&rsquo;s why we stay.&rdquo;</p>
+        </div>
+        <div class="perspective">
+          <div class="persp-col feelings"><div class="persp-header">Feelings</div><ul><li>Frustrated and betrayed &mdash; &ldquo;I&rsquo;m paying for prevention&rdquo;</li><li>Anxious all over again, especially about the kids</li><li>Questioning whether the service actually works</li><li>Relieved when the Branch Manager takes it personally</li></ul></div>
+          <div class="persp-col actions"><div class="persp-header">Actions</div><ul><li>Calling the branch urgently</li><li>Checking the SMART dashboard for any alerts</li><li>Documenting the new signs with photos</li><li>Expecting immediate action, not excuses</li></ul></div>
+          <div class="persp-col interactions"><div class="persp-header">Interactions</div><ul><li>Direct phone call with Branch Manager</li><li>Emergency re-service visit within 24 hours</li><li>Root cause investigation on-site</li><li>Follow-up call within 48 hours</li></ul></div>
+          <div class="persp-col painpoints"><div class="persp-header">Painpoints</div><ul><li>Having to explain the full situation again</li><li>Feeling like the monitoring system failed</li><li>Worrying about being charged extra for re-service</li><li>Loss of confidence in the prevention promise</li></ul></div>
+          <div class="persp-col improvements"><div class="persp-header">Improvements</div><ul><li>SMART should detect and alert before the customer sees signs</li><li>Branch Manager should already have the full history on screen</li><li>Re-service guarantee clearly communicated at sign-up</li><li>Proactive &ldquo;we noticed something&rdquo; outreach instead of waiting for the call</li></ul></div>
+        </div>
+        <div class="outcome"><p>Fast, personal recovery reinforces trust. The family stays because Anticimex owned the problem and fixed it.</p></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- CLOSE -->
+<section id="close" class="bg-navy" style="padding-top:8rem">
+  <div class="container">
+    <div class="close-statement reveal">This family went from panic to prevention in one week. From a one-time emergency to a recurring relationship built on trust, data, and genuine care for their home.</div>
+    <div class="close-metrics reveal d1">
+      <div class="metric"><div class="val">1</div><div class="lbl">Day to first service</div></div>
+      <div class="metric"><div class="val">4</div><div class="lbl">Quarterly visits / year</div></div>
+      <div class="metric"><div class="val">24/7</div><div class="lbl">SMART monitoring</div></div>
+      <div class="metric"><div class="val">1</div><div class="lbl">Referral generated</div></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>Anticimex &mdash; Customer Journey: Family Homeowner &mdash; <a href="index.html">Back to Lifecycle Plan</a></p>
+</footer>
+
+<script>
+const ro=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('visible');ro.unobserve(x.target)}})},{threshold:.08,rootMargin:'0px 0px -30px 0px'});
+document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+const nav=document.getElementById('mainNav');
+window.addEventListener('scroll',()=>{nav.classList.toggle('scrolled',window.scrollY>40)});
+</script>
+</body>
+</html>

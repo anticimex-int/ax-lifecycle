@@ -1,0 +1,8 @@
+{
+  "name": "anticimex-lifecycle",
+  "private": true,
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
+    "@sanity/client": "^7.3.0"
+  }
+}

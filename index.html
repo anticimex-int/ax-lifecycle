@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anticimex — Customer Lifecycle Plan</title>
+<style>
+@font-face{font-family:'Anticimex Sans';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/AnticimexSans-Regular.woff2) format('woff2')}
+@font-face{font-family:'Anticimex Sans';font-style:normal;font-weight:700;font-display:swap;src:url(fonts/AnticimexSans-Bold.woff2) format('woff2')}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --blue-10:#000f3b;--blue-20:#051e66;--blue-30:#0d2b88;
+  --blue-60:#0862b7;--blue-70:#187ee0;--blue-80:#41a2ff;
+  --blue-90:#d2dbe3;--blue-95:#d9ecff;--blue-100:#f8fbfe;
+  --green-50:#2da96b;--green-70:#1ed68c;--green-90:#bff6db;--green-100:#f8fffc;
+  --orange-40:#ff7c00;--orange-90:#feead9;
+  --red-50:#e92525;--red-90:#f1d2d2;
+  --neutral-40:#767676;--neutral-90:#f2f2f2;--neutral-95:#f6f6f6;--white:#fff;
+  --text:rgba(0,0,0,.85);--text-secondary:#4a5568;
+  --shadow:0 24px 64px -24px rgba(0,0,0,.08);
+  --font:'Anticimex Sans',ui-sans-serif,system-ui,sans-serif;
+  --ease:cubic-bezier(.4,0,.2,1);
+}
+html{scroll-behavior:smooth;scrollbar-width:thin;scrollbar-color:var(--blue-90) var(--white)}
+body{font-family:var(--font);background:var(--white);color:var(--text);line-height:1.7;overflow-x:hidden;-webkit-font-smoothing:antialiased;font-size:16px}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--white)}::-webkit-scrollbar-thumb{background:var(--blue-90);border-radius:3px}
+:focus-visible{outline:2px solid var(--blue-70);outline-offset:2px;border-radius:.25rem}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;height:4.5rem;display:flex;align-items:center;justify-content:space-between;padding:0 2.5rem;
+  background:var(--white);border-bottom:1px solid var(--blue-95);transition:box-shadow .3s var(--ease)}
+nav.scrolled{box-shadow:var(--shadow)}
+.nav-logo{display:flex;align-items:center;gap:.75rem}
+.nav-logo img{height:1.6rem;width:auto}
+.nav-logo .doc-type{font-weight:400;font-size:.7rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-secondary);padding-left:.75rem;border-left:1px solid var(--blue-90)}
+.nav-links{display:flex;gap:.1rem}
+.nav-links a{color:var(--text-secondary);text-decoration:none;font-size:.75rem;font-weight:700;padding:.4rem .7rem;border-radius:.25rem;transition:all .2s;text-transform:uppercase;letter-spacing:.03em}
+.nav-links a:hover,.nav-links a.active{color:var(--blue-20);background:var(--blue-100)}
+
+/* LAYOUT */
+section{position:relative;padding:6rem 2.5rem;scroll-margin-top:4.5rem}
+.container{max-width:1100px;margin:0 auto}
+.sn{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.18em;color:var(--text-secondary);margin-bottom:.5rem}
+.st{font-size:clamp(1.8rem,3.5vw,2.5rem);font-weight:700;line-height:1.2;color:var(--blue-20);margin-bottom:.75rem;letter-spacing:-.015em;max-width:700px}
+.sl{font-size:1.05rem;color:var(--text-secondary);max-width:660px;line-height:1.8;margin-bottom:2.5rem}
+
+/* Section backgrounds */
+.bg-white{background:var(--white)}
+.bg-blue{background:var(--blue-100)}
+.bg-green{background:var(--green-100)}
+.bg-navy{background:var(--blue-30);color:var(--white)}
+.bg-navy .sn{color:rgba(255,255,255,.55)}
+.bg-navy .st{color:var(--white)}
+.bg-navy .sl{color:rgba(255,255,255,.75)}
+
+/* Diagonal divider: consistent angle on every section's bottom edge.
+   The ::after creates a triangle in the NEXT section's color,
+   placed at the bottom of the current section, always same angle. */
+.angled{padding-bottom:9rem}
+.angled::before{content:'';position:absolute;bottom:0;left:0;right:0;height:4.5rem;z-index:4;
+  background:linear-gradient(to bottom right,transparent calc(50% - 1px),var(--blue-90) calc(50% - 1px),var(--blue-90) 50%,transparent 50%);pointer-events:none}
+.angled::after{content:'';position:absolute;bottom:0;left:0;right:0;height:4.5rem;z-index:3;
+  background:var(--next-bg,var(--white));clip-path:polygon(100% 0,0 100%,100% 100%)}
+#hero::after{z-index:3}
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .6s var(--ease),transform .6s var(--ease)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.d1{transition-delay:.08s}.d2{transition-delay:.16s}.d3{transition-delay:.24s}.d4{transition-delay:.32s}.d5{transition-delay:.4s}.d6{transition-delay:.48s}
+
+/* HERO */
+#hero{min-height:100vh;display:flex;align-items:center;padding-top:4.5rem;padding-bottom:9rem;background:var(--blue-30);color:var(--white);position:relative;overflow:hidden;scroll-margin-top:0}
+#hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:4.5rem;background:var(--white);clip-path:polygon(100% 0,0 100%,100% 100%)}
+.hero-bg{position:absolute;inset:0;background:linear-gradient(160deg,var(--blue-20) 0%,var(--blue-30) 40%,#1038a0 100%)}
+.hero-accent{position:absolute;top:5%;right:0;width:50vw;height:50vw;border-radius:50%;background:radial-gradient(circle,rgba(30,214,140,.08) 0%,rgba(24,126,224,.04) 40%,transparent 65%);pointer-events:none}
+.hero-content{position:relative;z-index:2;max-width:740px}
+.hero-badge{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.15em;color:rgba(255,255,255,.6);margin-bottom:2.5rem;display:flex;align-items:center;gap:.75rem}
+.hero-badge::before{content:'';width:24px;height:1px;background:rgba(255,255,255,.35)}
+h1.hero-title{font-size:clamp(2.5rem,5.5vw,4rem);font-weight:700;line-height:1.08;letter-spacing:-.025em;margin-bottom:1.5rem;color:var(--white)}
+h1.hero-title em{font-style:normal;color:var(--green-70)}
+.hero-desc{font-size:1.1rem;color:rgba(255,255,255,.78);max-width:580px;line-height:1.8;margin-bottom:3rem}
+.hero-meta{display:flex;gap:3rem;flex-wrap:wrap}
+.hero-meta-item{border-left:1px solid rgba(255,255,255,.2);padding-left:1rem}
+.hero-meta-item .val{font-size:1.8rem;font-weight:700;line-height:1;color:var(--white)}
+.hero-meta-item .label{font-size:.7rem;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.08em;margin-top:.3rem}
+.scroll-cue{position:absolute;bottom:7rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.5rem;color:rgba(255,255,255,.4);font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.18em}
+.scroll-cue::after{content:'';width:1px;height:28px;background:linear-gradient(to bottom,rgba(255,255,255,.45),transparent);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.2;transform:scaleY(.7)}50%{opacity:1;transform:scaleY(1)}}
+
+/* CARDS */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.25rem}
+.card{padding:1.75rem;border:1px solid var(--blue-95);border-radius:.375rem;background:var(--white);transition:border-color .2s,box-shadow .3s}
+.card:hover{border-color:var(--blue-90);box-shadow:var(--shadow)}
+.card h3{font-size:1rem;font-weight:700;color:var(--blue-20);margin-bottom:.5rem}
+.card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7}
+.card ul{list-style:none;margin-top:.5rem}
+.card li{font-size:.9rem;color:var(--text);padding:.25rem 0;display:flex;align-items:baseline;gap:.65rem;line-height:1.6}
+.card li::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--green-70);flex-shrink:0;transform:translateY(-.1em)}
+
+/* SEGMENTS */
+.seg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+.seg{padding:2rem;border:1px solid var(--blue-95);border-radius:.375rem;transition:border-color .2s,box-shadow .3s}
+.seg:hover{border-color:var(--blue-90);box-shadow:var(--shadow)}
+.seg-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:1rem;display:inline-block;padding:.3rem .75rem;border-radius:9999px}
+.seg h3{font-size:1.15rem;font-weight:700;color:var(--blue-20);margin-bottom:.25rem}
+.seg .seg-sub{font-size:.9rem;color:var(--text-secondary);margin-bottom:1rem;line-height:1.65}
+.seg h4{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--blue-20);margin-bottom:.5rem;margin-top:1.25rem}
+.seg ul{list-style:none;display:flex;flex-wrap:wrap;gap:.3rem}
+.seg li{font-size:.8rem;color:var(--blue-20);padding:.28rem .65rem;background:var(--blue-100);border-radius:9999px;border:1px solid var(--blue-95)}
+
+/* LIFECYCLE */
+#lifecycle{padding-bottom:5rem}
+.lc-wrapper{position:relative;overflow:hidden}
+.lc-wrapper::after{content:'';position:absolute;top:0;bottom:1rem;right:0;width:2.5rem;z-index:2;pointer-events:none;background:linear-gradient(to left,var(--white),transparent);display:none}
+.lc-track{display:flex;gap:0;overflow-x:visible;padding:0 0 1.5rem 0;margin-bottom:2.5rem;position:relative}
+.lc-track::-webkit-scrollbar{height:3px}.lc-track::-webkit-scrollbar-thumb{background:var(--blue-90);border-radius:3px}
+.lc-stage{flex:1 1 0%;min-width:0;padding:0 .3rem 0;cursor:pointer;position:relative;z-index:1;scroll-snap-align:start;transition:opacity .25s}
+.lc-stage:not(.active){opacity:.45}
+.lc-stage:not(.active):hover{opacity:.85}
+.lc-dots-row{display:flex;align-items:center;justify-content:center;height:14px;margin:10px 0 .65rem}
+.lc-dot{width:14px;height:14px;border-radius:50%;border:2px solid;position:relative;z-index:2;transition:all .3s var(--ease);background:var(--white)}
+.lc-line{position:absolute;left:0;height:1px;background:var(--blue-90);z-index:0;pointer-events:none}
+.lc-stage:hover .lc-dot,.lc-stage.active .lc-dot{transform:scale(1.6);background:currentColor}
+.lc-stage.active .lc-dot{box-shadow:0 0 0 5px color-mix(in srgb,currentColor 15%,transparent)}
+.lc-stage:focus-visible .lc-dot{transform:scale(1.6);background:currentColor;box-shadow:0 0 0 5px rgba(24,126,224,.3)}
+.lc-num{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;text-align:center;margin-bottom:.15rem}
+.lc-name{font-size:.9rem;font-weight:700;text-align:center;color:var(--blue-20);margin-bottom:.15rem;transition:color .2s}
+.lc-sub{font-size:.75rem;color:var(--text-secondary);text-align:center;line-height:1.45}
+.lc-stage:hover .lc-name,.lc-stage.active .lc-name{color:var(--blue-30)}
+
+/* PANELS */
+.stage-panel{border:1px solid var(--blue-95);border-radius:.625rem;background:var(--white);overflow:hidden;display:none;
+  animation:panelIn .4s var(--ease);box-shadow:0 8px 40px -12px rgba(0,0,0,.08)}
+.stage-panel.active{display:block}
+@keyframes panelIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* Panel accent bar */
+.panel-accent{height:3px;background:var(--sc,var(--blue-60))}
+
+/* Panel header */
+.panel-header{display:grid;grid-template-columns:1fr 1fr;gap:2rem;padding:2.25rem 2.5rem;background:linear-gradient(135deg,rgba(248,251,254,.5) 0%,rgba(217,236,255,.18) 100%);border-bottom:1px solid var(--blue-95);position:relative}
+.panel-header::before{content:attr(data-num);position:absolute;right:2.5rem;top:1.25rem;font-size:5.5rem;font-weight:700;line-height:1;color:var(--sc,var(--blue-60));opacity:.04;pointer-events:none}
+.panel-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--sc,var(--blue-60));margin-bottom:.4rem}
+.panel-header h3{font-size:1.65rem;font-weight:700;color:var(--blue-20);line-height:1.2;margin-bottom:.5rem}
+.panel-goal{font-size:.95rem;color:var(--text-secondary);line-height:1.7}
+.panel-mindset{padding:1.25rem 1.5rem;border-radius:.5rem;background:var(--white);border:1px solid var(--blue-95);align-self:center}
+.panel-mindset h4{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text-secondary);margin-bottom:.5rem}
+.panel-mindset ul{list-style:none}
+.panel-mindset li{font-size:.92rem;color:var(--blue-20);font-style:italic;padding:.25rem 0;line-height:1.6}
+.panel-mindset li::before{content:'\201C';color:var(--sc,var(--blue-60));margin-right:.15rem;font-weight:700;font-style:normal}
+
+/* Panel body */
+.panel-body{padding:2rem 2.5rem 2.25rem}
+.panel-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-bottom:2rem}
+.panel-block{padding:1.5rem;border:1px solid var(--blue-95);border-radius:.5rem;background:var(--white);transition:border-color .2s}
+.panel-block:hover{border-color:var(--blue-90)}
+.panel-block h4{font-size:.88rem;font-weight:700;color:var(--blue-20);margin-bottom:.65rem;padding-left:.85rem;border-left:2.5px solid var(--sc,var(--blue-60))}
+.panel-block ul{list-style:none}
+.panel-block li{font-size:.88rem;color:var(--text);padding:.28rem 0;display:flex;align-items:baseline;gap:.65rem;line-height:1.65}
+.panel-block li::before{content:'';width:5px;height:5px;border-radius:50%;background:color-mix(in srgb,var(--sc,var(--green-70)) 50%,var(--blue-95));flex-shrink:0;transform:translateY(-.1em)}
+
+/* KPI footer */
+.panel-kpis{padding:1.5rem 0 0;border-top:1px solid var(--blue-95)}
+.panel-kpis h4{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text-secondary);margin-bottom:.75rem}
+.panel-kpis .tags{display:flex;flex-wrap:wrap;gap:.4rem}
+.panel-kpis .t{font-size:.8rem;padding:.35rem .8rem;background:var(--blue-100);border:1px solid var(--blue-95);border-radius:9999px;color:var(--blue-20);font-weight:700;transition:all .2s}
+.panel-kpis .t:hover{background:var(--blue-95)}
+
+/* OPS GRID */
+.ops-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.ops-card{padding:1.5rem;border:1px solid var(--blue-95);border-radius:.375rem;background:var(--white);transition:border-color .2s,box-shadow .3s}
+.ops-card:hover{border-color:var(--blue-90);box-shadow:var(--shadow)}
+.ops-card h3{font-size:1rem;font-weight:700;color:var(--blue-20);margin-bottom:.5rem;display:flex;align-items:center;gap:.4rem}
+.ops-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.ops-card ul{list-style:none}
+.ops-card li{font-size:.9rem;color:var(--text);padding:.2rem 0;display:flex;align-items:baseline;gap:.6rem;line-height:1.6}
+.ops-card li::before{content:'';width:4px;height:4px;border-radius:50%;background:var(--blue-90);flex-shrink:0;transform:translateY(-.1em)}
+
+/* GLOBAL */
+.global-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+.gcol{padding:2rem;border:1px solid var(--blue-95);border-radius:.375rem;background:var(--white)}
+.gcol h3{font-size:1.1rem;font-weight:700;color:var(--blue-20);margin-bottom:1rem}
+.gcol ul{list-style:none}
+.gcol li{font-size:.9rem;color:var(--text);padding:.35rem 0;display:flex;align-items:baseline;gap:.6rem;line-height:1.6}
+.gcol li::before{content:'';width:6px;min-width:6px;height:2px;border-radius:1px;flex-shrink:0;transform:translateY(-.25em)}
+.gcol.std li::before{background:var(--blue-60)}
+.gcol.lcl li::before{background:var(--green-70)}
+.gov-layers{display:flex;gap:1rem;margin-top:1.5rem;flex-wrap:wrap}
+.gov-layer{flex:1;min-width:200px;text-align:center;padding:1.5rem 1rem;border-radius:.375rem;border:1px solid var(--blue-95);background:var(--blue-100)}
+.gov-layer .num{font-size:1.8rem;font-weight:700;line-height:1;margin-bottom:.35rem;color:var(--blue-20)}
+.gov-layer .label{font-size:.85rem;color:var(--text-secondary)}
+
+/* JOURNEYS */
+.journey-tabs{display:flex;gap:.35rem;margin-bottom:1.5rem;flex-wrap:wrap}
+.journey-tab{padding:.5rem 1.15rem;border:2px solid var(--blue-95);border-radius:9999px;background:transparent;color:var(--blue-20);
+  font-family:var(--font);font-size:.8rem;font-weight:700;cursor:pointer;transition:all .2s var(--ease);text-transform:uppercase;letter-spacing:.04em}
+.journey-tab.active,.journey-tab:hover{border-color:var(--blue-20);background:var(--blue-20);color:var(--white)}
+.journey-flow{display:none}
+.journey-flow.active{display:flex;gap:0;overflow-x:auto;padding-bottom:.5rem}
+.journey-step{flex:0 0 auto;width:clamp(150px,13vw,190px);padding:1rem .75rem;position:relative}
+.journey-step::after{content:'';position:absolute;right:0;top:50%;transform:translateY(-50%);width:16px;height:1.5px;background:var(--blue-95)}
+.journey-step:last-child::after{display:none}
+.journey-step-num{font-size:.7rem;font-weight:700;color:var(--green-50);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.35rem}
+.journey-step p{font-size:.88rem;color:var(--text);line-height:1.6}
+
+/* ROADMAP */
+.rm-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem}
+.rm-phase{padding:1.75rem 1.25rem;border:1px solid rgba(255,255,255,.12);border-radius:.5rem;background:rgba(255,255,255,.06)}
+.rm-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.25rem}
+.rm-phase h3{font-size:1.1rem;font-weight:700;margin-bottom:.25rem}
+.rm-months{font-size:.8rem;color:rgba(255,255,255,.55);margin-bottom:1rem}
+.rm-phase ul{list-style:none}
+.rm-phase li{font-size:.88rem;color:rgba(255,255,255,.82);padding:.3rem 0;display:flex;align-items:baseline;gap:.6rem;line-height:1.6}
+.rm-phase li::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--green-70);flex-shrink:0;transform:translateY(-.1em)}
+
+/* KPIS */
+.kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem}
+.kpi-group{padding:1.75rem;border:1px solid var(--blue-95);border-radius:.375rem}
+.kpi-group h3{font-size:1rem;font-weight:700;color:var(--blue-20);margin-bottom:.75rem;padding-bottom:.6rem;border-bottom:2px solid var(--blue-95)}
+.kpi-group ul{list-style:none}
+.kpi-group li{font-size:.88rem;color:var(--text);padding:.3rem 0;display:flex;align-items:baseline;gap:.6rem;line-height:1.6}
+.kpi-group li::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--blue-90);flex-shrink:0;transform:translateY(-.1em)}
+
+/* RISKS */
+.risk-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.25rem}
+.risk{padding:1.75rem;border:1px solid var(--blue-95);border-radius:.375rem;background:var(--white);transition:border-color .2s,box-shadow .3s}
+.risk:hover{border-color:var(--blue-90);box-shadow:var(--shadow)}
+.risk .rl{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:.25rem .7rem;border-radius:9999px;display:inline-block;margin-bottom:.5rem;background:var(--red-90);color:var(--red-50)}
+.risk h3{font-size:1rem;font-weight:700;color:var(--blue-20);margin-bottom:.85rem;line-height:1.4}
+.risk .ml{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:.25rem .7rem;border-radius:9999px;display:inline-block;margin-bottom:.5rem;background:var(--green-90);color:var(--green-50)}
+.risk ul{list-style:none}
+.risk li{font-size:.88rem;color:var(--text);padding:.25rem 0;display:flex;align-items:baseline;gap:.65rem;line-height:1.6}
+.risk li::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--green-70);flex-shrink:0;transform:translateY(-.1em)}
+
+/* PERSONA GENERATOR */
+.persona-gen{margin-top:3rem;padding:2rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:.5rem;max-width:580px}
+.persona-gen h3{font-size:1rem;font-weight:700;color:var(--white);margin-bottom:.75rem}
+.persona-gen p{font-size:.88rem;color:rgba(255,255,255,.6);margin-bottom:1rem;line-height:1.6}
+.gen-passphrase{display:flex;gap:.5rem;margin-bottom:1rem}
+.gen-passphrase input{flex:1;padding:.6rem .9rem;border:1.5px solid rgba(255,255,255,.15);border-radius:.375rem;background:rgba(255,255,255,.06);color:var(--white);font-family:var(--font);font-size:.88rem;outline:none;transition:border-color .2s}
+.gen-passphrase input:focus{border-color:var(--green-70)}
+.gen-passphrase button{padding:.6rem 1.25rem;border:none;border-radius:.375rem;background:rgba(255,255,255,.12);color:rgba(255,255,255,.7);font-family:var(--font);font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap}
+.gen-passphrase button:hover{background:rgba(255,255,255,.2);color:var(--white)}
+.gen-form{display:none;gap:.5rem}
+.gen-form.visible{display:flex}
+.gen-form input{flex:1;padding:.6rem .9rem;border:1.5px solid rgba(255,255,255,.15);border-radius:.375rem;background:rgba(255,255,255,.06);color:var(--white);font-family:var(--font);font-size:.88rem;outline:none;transition:border-color .2s}
+.gen-form input::placeholder{color:rgba(255,255,255,.3)}
+.gen-form input:focus{border-color:var(--green-70)}
+.gen-form button{padding:.6rem 1.5rem;border:none;border-radius:.375rem;background:var(--green-70);color:var(--blue-10);font-family:var(--font);font-size:.88rem;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap}
+.gen-form button:hover{background:var(--green-50);color:var(--white)}
+.gen-form button:disabled{opacity:.5;cursor:not-allowed}
+.gen-status{font-size:.82rem;margin-top:.75rem;line-height:1.5}
+.gen-status.error{color:#ff6b6b}
+.gen-status.success{color:var(--green-70)}
+.gen-status.loading{color:rgba(255,255,255,.6)}
+.gen-spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.2);border-top-color:var(--green-70);border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:.5rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+.gen-authed{display:none;font-size:.78rem;color:var(--green-70);margin-bottom:.75rem}
+.gen-authed.visible{display:block}
+
+/* PERSONA GALLERY */
+#persona-gallery{scroll-margin-top:4.5rem}
+.gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1rem}
+.gallery-card{padding:1.5rem;border:1px solid var(--blue-95);border-radius:.375rem;background:var(--white);text-decoration:none;color:var(--text);transition:border-color .2s,box-shadow .3s,transform .2s;display:block}
+.gallery-card:hover{border-color:var(--blue-90);box-shadow:var(--shadow);transform:translateY(-2px)}
+.gallery-emoji{font-size:2rem;margin-bottom:.75rem}
+.gallery-card h3{font-size:1rem;font-weight:700;color:var(--blue-20);margin-bottom:.35rem;line-height:1.3}
+.gallery-card p{font-size:.82rem;color:var(--text-secondary);line-height:1.55;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.gallery-empty{text-align:center;padding:3rem 2rem;color:var(--text-secondary);font-size:.92rem}
+.gallery-loading{text-align:center;padding:2rem;color:var(--text-secondary);font-size:.88rem}
+
+/* CLOSE */
+#close{scroll-margin-top:4.5rem}
+.close-statement{font-size:clamp(1.15rem,2.2vw,1.5rem);font-weight:700;line-height:1.45;color:rgba(255,255,255,.85);max-width:750px;margin-bottom:2.5rem}
+.close-list{display:grid;gap:.6rem;max-width:750px}
+.close-item{display:flex;align-items:flex-start;gap:.75rem;padding:1rem 1.25rem;border:1px solid rgba(255,255,255,.12);border-radius:.5rem;background:rgba(255,255,255,.06)}
+.close-item .ck{width:18px;height:18px;border-radius:50%;background:rgba(30,214,140,.15);border:1.5px solid var(--green-70);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.close-item .ck svg{width:10px;height:10px;stroke:var(--green-70);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.close-item p{font-size:.92rem;color:rgba(255,255,255,.85);line-height:1.6}
+
+footer{background:var(--blue-20);padding:1.5rem 2.5rem;text-align:center}
+footer p{font-size:.72rem;color:rgba(255,255,255,.3)}
+
+/* Legacy section classes - now using bg-* and slice-* */
+
+@media(max-width:1024px){
+  .seg-grid,.ops-grid,.kpi-grid{grid-template-columns:1fr 1fr}
+  .rm-grid{grid-template-columns:1fr 1fr;gap:1rem}
+  .global-grid{grid-template-columns:1fr}
+  .nav-links{display:none}
+  .panel-header{grid-template-columns:1fr 1fr;gap:1.5rem;padding:2rem}
+  .panel-body{padding:1.75rem 2rem}
+  .angled::before,.angled::after{height:3rem}
+  .angled{padding-bottom:7rem}
+  #hero::after{height:3rem}
+  #hero{padding-bottom:7rem}
+}
+@media(max-width:768px){
+  section{padding:3.5rem 1.25rem;scroll-margin-top:3.5rem}
+  .seg-grid,.ops-grid,.kpi-grid,.risk-grid{grid-template-columns:1fr}
+  .rm-grid{grid-template-columns:1fr}
+  .hero-meta{gap:1.5rem}
+  .hero-meta-item .val{font-size:1.4rem}
+  h1.hero-title{font-size:2rem}
+  .panel-grid{grid-template-columns:1fr}
+  .panel-header{grid-template-columns:1fr;gap:1rem;padding:1.5rem}
+  .panel-header::before{display:none}
+  .panel-body{padding:1.5rem}
+  .stage-panel{overflow:hidden}
+  .lc-wrapper::after{display:block;width:1rem}
+  .lc-track{overflow-x:auto;padding:0 1.5rem 1.5rem 0;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity}
+  .lc-stage{flex:0 0 155px}
+  .angled::before,.angled::after{height:2rem}
+  .angled{padding-bottom:5rem}
+  #hero::after{height:2rem}
+  #hero{padding-bottom:5rem}
+  nav{height:3.5rem;padding:0 1.25rem}
+  .gov-layers{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<nav id="mainNav">
+  <div class="nav-logo"><img src="anticimex-logo.png" alt="Anticimex"> <span class="doc-type">Customer Lifecycle Plan</span></div>
+  <div class="nav-links">
+    <a href="#objective">Objective</a>
+    <a href="#segments">Segments</a>
+    <a href="#lifecycle">Lifecycle</a>
+    <a href="#operating">Operating</a>
+    <a href="#global">Global</a>
+    <a href="#kpis">KPIs</a>
+    <a href="#persona-gallery">Personas</a>
+    <a href="#journeys">Journeys</a>
+    <a href="#roadmap">Roadmap</a>
+    <a href="#risks">Risks</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-accent"></div>
+  <div class="container hero-content">
+    <div class="hero-badge reveal">Anticimex Group &mdash; Strategic Operating Document</div>
+    <h1 class="hero-title reveal d1">The customer lifecycle is Anticimex&rsquo;s <em>operating system</em></h1>
+    <p class="hero-desc reveal d2">An end-to-end customer lifecycle plan designed for decentralized execution across residential, commercial, and multi-site enterprise customers &mdash; with regional adaptation built in.</p>
+    <div class="hero-meta reveal d3">
+      <div class="hero-meta-item"><div class="val">234+</div><div class="label">Branches</div></div>
+      <div class="hero-meta-item"><div class="val">37</div><div class="label">Platforms</div></div>
+      <div class="hero-meta-item"><div class="val">5</div><div class="label">Lifecycle stages</div></div>
+      <div class="hero-meta-item"><div class="val">22</div><div class="label">Countries</div></div>
+    </div>
+    <div class="persona-gen reveal d4">
+      <h3>Generate a persona journey</h3>
+      <p>Describe a customer persona and AI will map their journey through Anticimex's 5-stage lifecycle.</p>
+      <div class="gen-authed" id="genAuthed">Passphrase verified</div>
+      <div class="gen-passphrase" id="genPass">
+        <input type="password" id="passInput" placeholder="Enter passphrase to unlock">
+        <button onclick="verifyPass()">Unlock</button>
+      </div>
+      <div class="gen-form" id="genForm">
+        <input type="text" id="promptInput" placeholder="e.g. Hotel chain with 50 locations across Europe">
+        <button id="genBtn" onclick="generatePersona()">Generate</button>
+      </div>
+      <div class="gen-status" id="genStatus"></div>
+    </div>
+  </div>
+  <div class="scroll-cue">Scroll</div>
+</section>
+
+<!-- PERSONA GALLERY -->
+<section id="persona-gallery" class="bg-white">
+  <div class="container">
+    <div class="sn reveal">Explore</div>
+    <h2 class="st reveal d1">AI-generated persona journeys</h2>
+    <p class="sl reveal d2">See how the 5-stage customer lifecycle applies to different customer types, generated by AI and tailored to Anticimex.</p>
+    <div id="galleryContent" class="gallery-loading">Loading personas...</div>
+  </div>
+</section>
+
+<!-- 1. STRATEGIC OBJECTIVE -->
+<section id="objective" class="bg-white angled" style="--next-bg:var(--blue-100)">
+  <div class="container">
+    <div class="sn reveal">01</div>
+    <h2 class="st reveal d1">Strategic objective</h2>
+    <p class="sl reveal d2">Build a lifecycle that works across segments and geographies, driven by Anticimex&rsquo;s decentralized branch model.</p>
+    <div class="card-grid">
+      <div class="card reveal d1"><h3>Acquire efficiently</h3><p>Capture high-intent customers through local branch presence, SMART differentiation, and targeted digital channels with measurable cost per lead.</p></div>
+      <div class="card reveal d2"><h3>Convert to recurring</h3><p>Transform one-time jobs into recurring service relationships. Default to prevention plans with SMART monitoring built in.</p></div>
+      <div class="card reveal d3"><h3>Retain and expand</h3><p>Increase retention and share of wallet. Use the Prevention Score, proactive branch engagement, and data-driven upsell to grow customer lifetime value.</p></div>
+      <div class="card reveal d4"><h3>Standardize globally, adapt locally</h3><p>Global best practices for lifecycle stages, KPIs, and service standards. Local adaptation for pest types, regulations, language, pricing, and culture.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. CUSTOMER SEGMENTS -->
+<section id="segments" class="bg-blue angled" style="--next-bg:var(--white)">
+  <div class="container">
+    <div class="sn reveal">02</div>
+    <h2 class="st reveal d1">Customer segments</h2>
+    <p class="sl reveal d2">Design the lifecycle by segment, because needs and buying behavior differ significantly. One framework, three distinct execution modes.</p>
+    <div class="seg-grid">
+      <div class="seg reveal d1">
+        <div class="seg-label" style="background:var(--blue-100);color:var(--blue-20)">Residential</div>
+        <h3>Homeowners, renters &amp; property managers</h3>
+        <p class="seg-sub">Fast response, trust and safety, visible results, affordable ongoing prevention.</p>
+        <h4>Typical triggers</h4>
+        <ul><li>Ants</li><li>Cockroaches</li><li>Rodents</li><li>Termites</li><li>Bed bugs</li><li>Mosquitoes</li><li>Wasps</li><li>Seasonal prevention</li><li>Moving in/out</li><li>Family safety</li></ul>
+      </div>
+      <div class="seg reveal d2">
+        <div class="seg-label" style="background:var(--green-100);color:var(--green-50)">Commercial</div>
+        <h3>Restaurants, retail, offices, hotels &amp; food businesses</h3>
+        <p class="seg-sub">Compliance, low disruption, documentation, predictable service schedules, fast escalation.</p>
+        <h4>Typical triggers</h4>
+        <ul><li>Health inspections</li><li>Pest sighting</li><li>Audit preparation</li><li>New location</li><li>Seasonal surge</li><li>Compliance gap</li></ul>
+      </div>
+      <div class="seg reveal d3">
+        <div class="seg-label" style="background:var(--orange-90);color:var(--orange-40)">Enterprise / Multi-site</div>
+        <h3>Chains, logistics, hospitality, pharma &amp; global facilities</h3>
+        <p class="seg-sub">Centralized account management, site-level consistency, reporting, SLA adherence, audit readiness, international coordination.</p>
+        <h4>Typical triggers</h4>
+        <ul><li>RFP / procurement</li><li>Contract renewal</li><li>New region</li><li>Compliance audit</li><li>Consolidation</li><li>ESG reporting</li></ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3+4. LIFECYCLE STAGES -->
+<section id="lifecycle" class="bg-white angled" style="--next-bg:var(--green-100);padding-bottom:12rem">
+  <div class="container">
+    <div class="sn reveal">03</div>
+    <h2 class="st reveal d1">The five lifecycle stages</h2>
+    <p class="sl reveal d2">One common framework across all segments and geographies. Click any stage for the full operating detail.</p>
+    <div class="lc-wrapper reveal d3">
+    <div class="lc-track">
+      <div class="lc-line"></div>
+      <div class="lc-stage active" data-s="1" tabindex="0" role="tab" aria-selected="true"><div class="lc-num" style="color:#6366f1">01</div><div class="lc-dots-row"><div class="lc-dot" style="border-color:#6366f1;color:#6366f1"></div></div><div class="lc-name">Awareness</div><div class="lc-sub">Demand &amp; brand trust</div></div>
+      <div class="lc-stage" data-s="2" tabindex="0" role="tab"><div class="lc-num" style="color:#8b5cf6">02</div><div class="lc-dots-row"><div class="lc-dot" style="border-color:#8b5cf6;color:#8b5cf6"></div></div><div class="lc-name">Consideration</div><div class="lc-sub">Evaluate &amp; trust</div></div>
+      <div class="lc-stage" data-s="3" tabindex="0" role="tab"><div class="lc-num" style="color:#0862b7">03</div><div class="lc-dots-row"><div class="lc-dot" style="border-color:#0862b7;color:#0862b7"></div></div><div class="lc-name">Decision</div><div class="lc-sub">Convert &amp; onboard</div></div>
+      <div class="lc-stage" data-s="4" tabindex="0" role="tab"><div class="lc-num" style="color:#2da96b">04</div><div class="lc-dots-row"><div class="lc-dot" style="border-color:#2da96b;color:#2da96b"></div></div><div class="lc-name">Service</div><div class="lc-sub">Deliver &amp; retain</div></div>
+      <div class="lc-stage" data-s="5" tabindex="0" role="tab"><div class="lc-num" style="color:#ff7c00">05</div><div class="lc-dots-row"><div class="lc-dot" style="border-color:#ff7c00;color:#ff7c00"></div></div><div class="lc-name">Loyalty</div><div class="lc-sub">Grow &amp; protect</div></div>
+    </div>
+    </div>
+    <div id="panels">
+
+      <!-- STAGE 1: AWARENESS -->
+      <div class="stage-panel active" data-s="1" style="--sc:#6366f1">
+        <div class="panel-accent"></div>
+        <div class="panel-header" data-num="01">
+          <div>
+            <div class="panel-label">Stage 01</div>
+            <h3>Awareness</h3>
+            <p class="panel-goal">Create demand and brand trust before the pest problem becomes urgent.</p>
+          </div>
+          <div class="panel-mindset"><h4>Customer mindset</h4><ul><li>I may need help soon.</li><li>Who can I trust?</li><li>Is this company safe, local, and effective?</li></ul></div>
+        </div>
+        <div class="panel-body">
+          <div class="panel-grid">
+            <div class="panel-block"><h4>Brand positioning</h4><ul><li>Safety, speed, reliability, prevention</li><li>Scientific expertise and biology credentials</li><li>Local responsiveness with global standards</li><li>SMART innovation and sustainability leadership</li></ul></div>
+            <div class="panel-block"><h4>Demand generation</h4><ul><li>SEO for high-intent searches by branch territory</li><li>Local search and map listings per branch</li><li>Paid search for urgent pest queries</li><li>Social media for seasonal awareness</li><li>Partnerships: real estate, property managers, hospitality associations</li><li>Trade events for B2B</li><li>Content marketing by pest type and geography</li></ul></div>
+            <div class="panel-block"><h4>Educational content</h4><ul><li>Pest identification guides localized per market</li><li>Seasonal pest calendars by region</li><li>Prevention checklists</li><li>Industry compliance guides</li><li>Treatment explainers</li><li>Family/pet safety FAQs</li></ul></div>
+            <div class="panel-block"><h4>Reputation building</h4><ul><li>Reviews by branch location</li><li>Case studies by industry vertical</li><li>Technician credentials and certifications</li><li>Before/after narratives</li><li>ESG and sustainability messaging</li></ul></div>
+          </div>
+          <div class="panel-kpis"><h4>KPIs</h4><div class="tags"><span class="t">Branded search volume</span><span class="t">Local listing views &amp; calls</span><span class="t">Website traffic by market</span><span class="t">Cost per lead</span><span class="t">Share of voice by pest category</span><span class="t">Review volume &amp; rating</span></div></div>
+        </div>
+      </div>
+
+      <!-- STAGE 2: CONSIDERATION -->
+      <div class="stage-panel" data-s="2" style="--sc:#8b5cf6">
+        <div class="panel-accent"></div>
+        <div class="panel-header" data-num="02">
+          <div>
+            <div class="panel-label">Stage 02</div>
+            <h3>Consideration</h3>
+            <p class="panel-goal">Help prospects evaluate quickly and confidently.</p>
+          </div>
+          <div class="panel-mindset"><h4>Customer mindset</h4><ul><li>Can you solve my problem?</li><li>How fast can you get here?</li><li>Can I trust your technicians?</li><li>What will this cost?</li></ul></div>
+        </div>
+        <div class="panel-body">
+          <div class="panel-grid">
+            <div class="panel-block"><h4>Fast qualification</h4><ul><li>Route inquiries by geography, pest type, severity</li><li>Property type and urgency assessment</li><li>Contract potential scoring</li><li>Branch Manager direct callback for commercial prospects</li></ul></div>
+            <div class="panel-block"><h4>Frictionless inquiry paths</h4><ul><li>Instant call option</li><li>Web quote form</li><li>Photo upload for AI-assisted pest identification</li><li>Chatbot triage</li><li>Enterprise consultation request</li><li>Emergency same-day booking</li></ul></div>
+            <div class="panel-block"><h4>Trust-building proof points</h4><ul><li>Response time commitments</li><li>Licenses and certifications</li><li>Service guarantees</li><li>Treatment safety standards</li><li>Industry-specific expertise</li><li>Multilingual support where relevant</li></ul></div>
+            <div class="panel-block"><h4>Pricing strategy</h4><ul><li>Inspection fee or free where unit economics allow</li><li>One-time service pricing</li><li>Recurring plan options with SMART monitoring</li><li>Premium add-ons</li><li>Enterprise custom contracts</li><li>Structured estimate ranges for complex jobs</li></ul></div>
+          </div>
+          <div class="panel-kpis"><h4>KPIs</h4><div class="tags"><span class="t">Lead-to-inspection rate</span><span class="t">Speed to first response</span><span class="t">Quote-to-close rate</span><span class="t">Call answer rate</span><span class="t">Abandoned inquiry rate</span><span class="t">Average time to estimate</span></div></div>
+        </div>
+      </div>
+
+      <!-- STAGE 3: DECISION (merged Conversion + Onboarding) -->
+      <div class="stage-panel" data-s="3" style="--sc:#0862b7">
+        <div class="panel-accent"></div>
+        <div class="panel-header" data-num="03">
+          <div>
+            <div class="panel-label">Stage 03</div>
+            <h3>Decision</h3>
+            <p class="panel-goal">Turn leads into first service, set expectations, and onboard for long-term success.</p>
+          </div>
+          <div class="panel-mindset"><h4>Customer mindset</h4><ul><li>I need this fixed now.</li><li>I need reassurance I&rsquo;m making the right choice.</li><li>What happens next?</li></ul></div>
+        </div>
+        <div class="panel-body">
+          <div class="panel-grid">
+            <div class="panel-block"><h4>Sales playbooks</h4><ul><li>Urgent residential infestation</li><li>Preventative residential plan</li><li>Local business compliance service</li><li>Enterprise RFP / multi-site rollout</li><li>Acquired customer migration</li></ul></div>
+            <div class="panel-block"><h4>Recurring-first packaging</h4><ul><li>Default toward subscription/prevention plans</li><li>Monthly, bi-monthly, quarterly, seasonal options</li><li>Annual termite monitoring</li><li>Industry compliance schedules</li><li>SMART monitoring included in contract by default</li></ul></div>
+            <div class="panel-block"><h4>Offer design</h4><ul><li>First inspection discount</li><li>Bundled initial treatment + 12-month monitoring</li><li>Free follow-up within guarantee window</li><li>Multi-site pilot for enterprise customers</li></ul></div>
+            <div class="panel-block"><h4>Checkout &amp; booking</h4><ul><li>Digital estimates and e-sign</li><li>Flexible payment methods</li><li>Financing for large termite/exclusion work</li><li>Immediate scheduling</li><li>SMART device dispatch on contract signature</li></ul></div>
+            <div class="panel-block"><h4>Welcome journey</h4><ul><li>Booking confirmation and technician introduction</li><li>Preparation instructions and safety guidance</li><li>Expected outcomes and timing</li><li>Support contact details</li><li>Pet/child safety info</li><li>SMART device setup and dashboard access</li></ul></div>
+            <div class="panel-block"><h4>Segment-specific onboarding</h4><ul><li>Residential: prep checklists, follow-up expectations</li><li>Commercial: site contact alignment, logbook setup, escalation path</li><li>Enterprise: implementation manager, SLA definitions, regional governance</li><li>Treatment windows and disruption planning</li><li>SMART monitoring and digital reporting access</li></ul></div>
+          </div>
+          <div class="panel-kpis"><h4>KPIs</h4><div class="tags"><span class="t">First-service conversion rate</span><span class="t">Subscription attachment rate</span><span class="t">Average contract value</span><span class="t">CAC by channel &amp; segment</span><span class="t">Onboarding completion rate</span><span class="t">Time from sale to first service</span></div></div>
+        </div>
+      </div>
+
+      <!-- STAGE 4: SERVICE (merged Service Delivery + Retention) -->
+      <div class="stage-panel" data-s="4" style="--sc:#2da96b">
+        <div class="panel-accent"></div>
+        <div class="panel-header" data-num="04">
+          <div>
+            <div class="panel-label">Stage 04</div>
+            <h3>Service</h3>
+            <p class="panel-goal">Deliver reliable outcomes, build long-term trust, and prevent churn.</p>
+          </div>
+          <div class="panel-mindset"><h4>Customer mindset</h4><ul><li>Did you solve the problem?</li><li>Can I trust this company long term?</li><li>Do I still need this?</li></ul></div>
+        </div>
+        <div class="panel-body">
+          <div class="panel-grid">
+            <div class="panel-block"><h4>Visit structure</h4><ul><li>1. Inspection</li><li>2. Identification of pest and root causes</li><li>3. Treatment / intervention</li><li>4. Prevention recommendations</li><li>5. Documented report</li><li>6. Scheduling of next action</li></ul></div>
+            <div class="panel-block"><h4>Reports &amp; IPM</h4><ul><li>Digital service reports with photos and trend data</li><li>SMART monitoring data integrated</li><li>Inspection and monitoring first, targeted treatment only when needed</li><li>Sanitation, proofing/exclusion recommendations</li><li>Biodiversity Impact Matrix guiding biocide decisions</li><li>Customer education on prevention</li></ul></div>
+            <div class="panel-block"><h4>Proactive engagement</h4><ul><li>Upcoming visit reminders</li><li>Seasonal risk increase alerts</li><li>Service due date notifications</li><li>Renewal window communications</li><li>Prevention Score as ongoing value proof</li><li>Compliance reminders for regulated industries</li></ul></div>
+            <div class="panel-block"><h4>Consistency &amp; exceptions</h4><ul><li>Global SOPs with local adaptation</li><li>Brand standards, PPE, and safety protocols</li><li>Service quality scoring per branch</li><li>Fast re-service for re-infestation risk</li><li>Root cause review and supervisor escalation</li><li>Technical specialist involvement when needed</li></ul></div>
+            <div class="panel-block"><h4>Churn scoring</h4><ul><li>Missed appointments and declining engagement</li><li>Complaint and re-service frequency</li><li>Price sensitivity signals</li><li>Contract age and multi-service adoption</li><li>NPS/CSAT trends</li></ul></div>
+            <div class="panel-block"><h4>Retention interventions</h4><ul><li>Branch Manager service review call</li><li>Adjusted service frequency</li><li>Loyalty pricing</li><li>Free inspection add-on or SMART upgrade</li><li>Specialist inspection</li><li>Manager-level outreach for high-value accounts</li></ul></div>
+          </div>
+          <div class="panel-kpis"><h4>KPIs</h4><div class="tags"><span class="t">First-time resolution rate</span><span class="t">On-time arrival</span><span class="t">Technician CSAT</span><span class="t">Monthly &amp; annual churn</span><span class="t">Renewal rate</span><span class="t">Customer lifetime value</span></div></div>
+        </div>
+      </div>
+
+      <!-- STAGE 5: LOYALTY (merged Expansion + Advocacy + Recovery) -->
+      <div class="stage-panel" data-s="5" style="--sc:#ff7c00">
+        <div class="panel-accent"></div>
+        <div class="panel-header" data-num="05">
+          <div>
+            <div class="panel-label">Stage 05</div>
+            <h3>Loyalty</h3>
+            <p class="panel-goal">Grow customer value, build advocacy, and recover at-risk relationships.</p>
+          </div>
+          <div class="panel-mindset"><h4>Customer mindset</h4><ul><li>What else can you help with?</li><li>I&rsquo;d recommend these guys.</li><li>Give me a reason to come back.</li></ul></div>
+        </div>
+        <div class="panel-body">
+          <div class="panel-grid">
+            <div class="panel-block"><h4>Expansion by segment</h4><ul><li>Residential: termite, mosquito, rodent exclusion, wildlife, SMART upgrade</li><li>Commercial: audit support, hygiene monitoring, staff training, digital upgrades</li><li>Enterprise: global contract expansion, new-country rollout, analytics packages</li></ul></div>
+            <div class="panel-block"><h4>Trigger-based upsell</h4><ul><li>Technician-led lead capture during visits</li><li>Upsells triggered by pest sightings, season, property type</li><li>Inside sales follow-up and account review meetings</li><li>QBRs for enterprise accounts</li><li>Targeted email/SMS campaigns</li></ul></div>
+            <div class="panel-block"><h4>Reviews &amp; referrals</h4><ul><li>Review requests at first resolution and renewal anniversaries</li><li>Reviews tied to branch location for local SEO</li><li>Residential refer-a-friend credit</li><li>B2B referral incentives</li><li>Partner referral agreements with property managers</li></ul></div>
+            <div class="panel-block"><h4>Community trust</h4><ul><li>Vertical-specific case studies and testimonials</li><li>Infestation reduction and audit success narratives</li><li>Local educational events and school outreach</li><li>Sustainability and biodiversity protection messaging</li></ul></div>
+            <div class="panel-block"><h4>Complaint recovery</h4><ul><li>Acknowledge within defined SLA</li><li>Investigate root cause, act, and confirm resolution</li><li>Tiered escalation: frontline &rarr; Branch Manager &rarr; technical expert &rarr; regional director</li><li>Structured post-mortems for lost enterprise accounts</li></ul></div>
+            <div class="panel-block"><h4>Win-back</h4><ul><li>Price: lower-tier plan or SMART value justification</li><li>Inactivity: seasonal reactivation reminder</li><li>Poor experience: Branch Manager-led personal outreach</li><li>Moved/closed site: new property onboarding</li><li>Learnings fed back into lifecycle improvements</li></ul></div>
+          </div>
+          <div class="panel-kpis"><h4>KPIs</h4><div class="tags"><span class="t">Average revenue per account</span><span class="t">Upsell conversion rate</span><span class="t">Review completion rate</span><span class="t">Referral volume</span><span class="t">NPS</span><span class="t">Win-back rate</span><span class="t">Recovered revenue</span></div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- 5. OPERATING MODEL -->
+<section id="operating" class="bg-green angled" style="--next-bg:var(--white);padding-bottom:12rem">
+  <div class="container">
+    <div class="sn reveal">04</div>
+    <h2 class="st reveal d1">Cross-functional operating model</h2>
+    <p class="sl reveal d2">Six functions, clear ownership. Mapped to Anticimex&rsquo;s decentralized structure where Branch Managers own the customer relationship.</p>
+    <div class="ops-grid">
+      <div class="ops-card reveal d1"><h3><span class="ops-dot" style="background:var(--blue-30)"></span>Marketing</h3><ul><li>Awareness and lead generation</li><li>Local market campaigns</li><li>Content and reputation management</li><li>Referral engine</li></ul></div>
+      <div class="ops-card reveal d2"><h3><span class="ops-dot" style="background:var(--blue-60)"></span>Sales</h3><ul><li>Qualification and estimates</li><li>Conversion and enterprise proposals</li><li>Contract negotiation</li><li>Expansion pipeline</li></ul></div>
+      <div class="ops-card reveal d3"><h3><span class="ops-dot" style="background:var(--green-50)"></span>Operations</h3><ul><li>Scheduling and technician performance</li><li>Service quality and safety</li><li>Field productivity</li><li>SLA adherence</li></ul></div>
+      <div class="ops-card reveal d4"><h3><span class="ops-dot" style="background:var(--green-70)"></span>Customer Success</h3><ul><li>Renewals and QBRs</li><li>Issue prevention</li><li>Churn reduction</li><li>Enterprise relationship growth</li></ul></div>
+      <div class="ops-card reveal d5"><h3><span class="ops-dot" style="background:var(--blue-70)"></span>Digital / IT</h3><ul><li>CRM and field service tools</li><li>Customer portal and SMART platform</li><li>Data integrations and automation</li><li>Reporting and analytics</li></ul></div>
+      <div class="ops-card reveal d6"><h3><span class="ops-dot" style="background:var(--orange-40)"></span>Finance</h3><ul><li>Pricing discipline</li><li>CAC/LTV monitoring</li><li>Revenue retention and collections</li><li>Margin by segment</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<!-- 6. GLOBAL DESIGN -->
+<section id="global" class="bg-white angled" style="--next-bg:var(--blue-100)">
+  <div class="container">
+    <div class="sn reveal">05</div>
+    <h2 class="st reveal d1">Global design with local adaptation</h2>
+    <p class="sl reveal d2">A hub-and-spoke lifecycle model. Standardize the what at Group level. Localize the how across 37 platforms and 234+ branches.</p>
+    <div class="global-grid">
+      <div class="gcol std reveal d1">
+        <h3>Standardize globally</h3>
+        <ul><li>Brand promise and lifecycle stages</li><li>CRM architecture and customer data model</li><li>Core service standards and SMART ecosystem</li><li>KPI definitions and reporting templates</li><li>Enterprise account governance</li><li>NPS/CSAT methodology</li><li>Biodiversity Impact Matrix</li></ul>
+      </div>
+      <div class="gcol lcl reveal d2">
+        <h3>Adapt locally</h3>
+        <ul><li>Pest types and seasonality</li><li>Treatment regulations</li><li>Language and channels</li><li>Price points and service frequencies</li><li>Cultural expectations</li><li>Technician scripts</li><li>Claims and guarantees allowed by law</li></ul>
+      </div>
+    </div>
+    <div class="gov-layers reveal d3">
+      <div class="gov-layer"><div class="num">1</div><div class="label">Global center of excellence</div></div>
+      <div class="gov-layer"><div class="num">2</div><div class="label">Regional operating leaders (5 Regions)</div></div>
+      <div class="gov-layer"><div class="num">3</div><div class="label">Platform &amp; branch execution (37 Platforms, 234+ Branches)</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 9. KPI SCORECARD -->
+<section id="kpis" class="bg-blue angled" style="--next-bg:var(--white)">
+  <div class="container">
+    <div class="sn reveal">06</div>
+    <h2 class="st reveal d1">KPI scorecard</h2>
+    <p class="sl reveal d2">Track at four levels: global, region, platform, branch. The branch competition benchmarks these across all branches.</p>
+    <div class="kpi-grid">
+      <div class="kpi-group reveal d1"><h3>Acquisition</h3><ul><li>Lead volume</li><li>Customer acquisition cost (CAC)</li><li>Cost per booked inspection</li><li>Conversion rate</li><li>Speed to lead</li></ul></div>
+      <div class="kpi-group reveal d2"><h3>Service Quality</h3><ul><li>On-time arrival</li><li>First-time resolution</li><li>Re-service rate</li><li>Complaint rate</li><li>Technician productivity</li></ul></div>
+      <div class="kpi-group reveal d3"><h3>Customer Health</h3><ul><li>CSAT and NPS</li><li>Renewal rate</li><li>Churn</li><li>Contract tenure</li><li>Active plan penetration</li></ul></div>
+      <div class="kpi-group reveal d4"><h3>Growth</h3><ul><li>Average revenue per account</li><li>Cross-sell rate</li><li>Net revenue retention</li><li>Expansion revenue</li><li>Referral revenue</li></ul></div>
+      <div class="kpi-group reveal d5"><h3>Enterprise</h3><ul><li>SLA attainment</li><li>Audit pass rate</li><li>Site coverage</li><li>Account retention</li><li>Contract expansion rate</li></ul></div>
+      <div class="kpi-group reveal d6"><h3>SMART &amp; Digital</h3><ul><li>SMART penetration rate</li><li>Connected device growth</li><li>Data-triggered visit share</li><li>Prevention Score adoption</li><li>Digital inquiry share</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<!-- 10. SAMPLE JOURNEYS -->
+<section id="journeys" class="bg-white angled" style="--next-bg:var(--blue-30)">
+  <div class="container">
+    <div class="sn reveal">07</div>
+    <h2 class="st reveal d1">Sample lifecycle journeys</h2>
+    <p class="sl reveal d2">Three real-world customer paths through the lifecycle framework.</p>
+    <div class="journey-tabs reveal d3">
+      <button class="journey-tab active" data-j="res">Residential Recurring</button>
+      <button class="journey-tab" data-j="rest">Restaurant Customer</button>
+      <button class="journey-tab" data-j="ent">Global Enterprise</button>
+    </div>
+    <div class="journey-flow active" data-j="res">
+      <div class="journey-step"><div class="journey-step-num">01</div><p>Searches &ldquo;rodent control near me&rdquo;</p></div>
+      <div class="journey-step"><div class="journey-step-num">02</div><p>Calls branch or submits form</p></div>
+      <div class="journey-step"><div class="journey-step-num">03</div><p>Gets same-day inspection booking</p></div>
+      <div class="journey-step"><div class="journey-step-num">04</div><p>Receives clear estimate + recurring plan option</p></div>
+      <div class="journey-step"><div class="journey-step-num">05</div><p>First treatment completed with SMART install</p></div>
+      <div class="journey-step"><div class="journey-step-num">06</div><p>Gets service summary and prevention tips</p></div>
+      <div class="journey-step"><div class="journey-step-num">07</div><p>Enrolls in quarterly prevention plan</p></div>
+      <div class="journey-step"><div class="journey-step-num">08</div><p>Receives seasonal reminders and mosquito upsell</p></div>
+      <div class="journey-step"><div class="journey-step-num">09</div><p>Leaves review after successful service</p></div>
+      <div class="journey-step"><div class="journey-step-num">10</div><p>Refers neighbor</p></div>
+    </div>
+    <div class="journey-flow" data-j="rest">
+      <div class="journey-step"><div class="journey-step-num">01</div><p>Discovers Anticimex via local search or association</p></div>
+      <div class="journey-step"><div class="journey-step-num">02</div><p>Requests inspection for pest / compliance need</p></div>
+      <div class="journey-step"><div class="journey-step-num">03</div><p>Receives proposal with SMART monitoring and docs</p></div>
+      <div class="journey-step"><div class="journey-step-num">04</div><p>Onboarding: site contact and reporting setup</p></div>
+      <div class="journey-step"><div class="journey-step-num">05</div><p>Monthly visits with digital service logs</p></div>
+      <div class="journey-step"><div class="journey-step-num">06</div><p>Audit season triggers extra support</p></div>
+      <div class="journey-step"><div class="journey-step-num">07</div><p>Annual contract renews</p></div>
+      <div class="journey-step"><div class="journey-step-num">08</div><p>Adds second location</p></div>
+    </div>
+    <div class="journey-flow" data-j="ent">
+      <div class="journey-step"><div class="journey-step-num">01</div><p>RFP from multinational hospitality chain</p></div>
+      <div class="journey-step"><div class="journey-step-num">02</div><p>Central team sells global framework agreement</p></div>
+      <div class="journey-step"><div class="journey-step-num">03</div><p>Regional onboarding aligns SLAs and site lists</p></div>
+      <div class="journey-step"><div class="journey-step-num">04</div><p>Country branches execute local delivery</p></div>
+      <div class="journey-step"><div class="journey-step-num">05</div><p>Global dashboard tracks service, incidents, audits</p></div>
+      <div class="journey-step"><div class="journey-step-num">06</div><p>Quarterly reviews identify gaps</p></div>
+      <div class="journey-step"><div class="journey-step-num">07</div><p>Contract expands to more countries and services</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 11. ROADMAP -->
+<section id="roadmap" class="bg-navy angled" style="--next-bg:var(--white)">
+  <div class="container">
+    <div class="sn reveal">08</div>
+    <h2 class="st reveal d1">12-month implementation roadmap</h2>
+    <p class="sl reveal d2">Four phases that build on each other. Designed for decentralized rollout &mdash; global frameworks first, then platform-by-platform execution.</p>
+    <div class="rm-grid">
+      <div class="rm-phase reveal d1">
+        <div class="rm-label" style="color:rgba(99,102,241,.8)">Phase 1</div>
+        <h3>Foundation</h3>
+        <div class="rm-months">Months 1&ndash;3</div>
+        <ul><li>Define segments and lifecycle stages</li><li>Align global KPI definitions</li><li>Map current customer journeys</li><li>Identify key pain points</li><li>Standardize lead and customer data model</li><li>Launch review and referral basics</li></ul>
+      </div>
+      <div class="rm-phase reveal d2">
+        <div class="rm-label" style="color:rgba(8,98,183,.8)">Phase 2</div>
+        <h3>Conversion &amp; Onboarding</h3>
+        <div class="rm-months">Months 4&ndash;6</div>
+        <ul><li>Improve quote and booking flows</li><li>Implement recurring-plan-first packaging</li><li>Create onboarding journeys by segment</li><li>Standardize service reports</li><li>Train branches on lifecycle scripts</li></ul>
+      </div>
+      <div class="rm-phase reveal d3">
+        <div class="rm-label" style="color:rgba(45,169,107,.8)">Phase 3</div>
+        <h3>Retention &amp; Expansion</h3>
+        <div class="rm-months">Months 7&ndash;9</div>
+        <ul><li>Deploy renewal engine</li><li>Implement churn scoring</li><li>Launch upsell triggers</li><li>Establish enterprise QBR model</li><li>Create complaint recovery workflow</li></ul>
+      </div>
+      <div class="rm-phase reveal d4">
+        <div class="rm-label" style="color:rgba(255,124,0,.8)">Phase 4</div>
+        <h3>Global Optimization</h3>
+        <div class="rm-months">Months 10&ndash;12</div>
+        <ul><li>Benchmark countries/branches</li><li>Localize best-performing campaigns</li><li>Improve reporting and dashboards</li><li>Refine pricing/packaging</li><li>Create global lifecycle playbook</li></ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 12. RISKS -->
+<section id="risks" class="bg-white angled" style="--next-bg:var(--blue-30)">
+  <div class="container">
+    <div class="sn reveal">09</div>
+    <h2 class="st reveal d1">Risks and mitigations</h2>
+    <p class="sl reveal d2">Key risks that could undermine the lifecycle model and the mitigations built into the plan.</p>
+    <div class="risk-grid">
+      <div class="risk reveal d1">
+        <div class="rl">Risk</div>
+        <h3>One-time customers do not convert to recurring</h3>
+        <div class="ml">Mitigation</div>
+        <ul><li>Default to plan bundles with SMART monitoring included</li><li>Educate on prevention economics</li><li>Offer warranties tied to recurring plans</li></ul>
+      </div>
+      <div class="risk reveal d2">
+        <div class="rl">Risk</div>
+        <h3>Inconsistent service across countries and branches</h3>
+        <div class="ml">Mitigation</div>
+        <ul><li>Global SOPs with local adaptation</li><li>Technician certification programs</li><li>QA audits and shared dashboards</li><li>Branch competition benchmarking</li></ul>
+      </div>
+      <div class="risk reveal d3">
+        <div class="rl">Risk</div>
+        <h3>High churn after pest issue appears solved</h3>
+        <div class="ml">Mitigation</div>
+        <ul><li>Seasonal education campaigns</li><li>Prevention Score as ongoing value proof</li><li>Flexible plan tiers</li><li>Proactive reminders</li></ul>
+      </div>
+      <div class="risk reveal d4">
+        <div class="rl">Risk</div>
+        <h3>Weak enterprise reporting</h3>
+        <div class="ml">Mitigation</div>
+        <ul><li>Central data model with mandatory site-level logging</li><li>Standard global dashboard</li><li>Regular QBR cadence with Platform accountability</li></ul>
+      </div>
+      <div class="risk reveal d5">
+        <div class="rl">Risk</div>
+        <h3>Regulatory non-compliance across markets</h3>
+        <div class="ml">Mitigation</div>
+        <ul><li>Local compliance ownership at Platform level</li><li>Approved treatment libraries (Biodiversity Impact Matrix)</li><li>Country-level legal review of messaging and methods</li></ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 13. CLOSE -->
+<section id="close" class="bg-navy">
+  <div class="container">
+    <div class="sn reveal">10</div>
+    <h2 class="st reveal d1">What good looks like</h2>
+    <div class="close-statement reveal d2">A mature lifecycle program produces measurable results across every segment, market, and branch &mdash; driven by local execution within a global framework.</div>
+    <div class="close-list">
+      <div class="close-item reveal d1"><div class="ck"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><p>Strong local lead generation powered by branch presence and global brand trust</p></div>
+      <div class="close-item reveal d2"><div class="ck"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><p>Fast conversion into first service with high attachment to recurring prevention plans</p></div>
+      <div class="close-item reveal d3"><div class="ck"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><p>Consistent technician experience worldwide with low complaint and re-service rates</p></div>
+      <div class="close-item reveal d4"><div class="ck"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><p>High renewal and expansion in commercial and enterprise accounts</p></div>
+      <div class="close-item reveal d5"><div class="ck"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><p>A steady flow of reviews, referrals, and successful win-backs driving organic growth</p></div>
+      <div class="close-item reveal d6"><div class="ck"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><p>SMART adoption growing across all segments, deepening the competitive moat with every connected customer</p></div>
+    </div>
+  </div>
+</section>
+
+<footer><p>Anticimex Group &mdash; Customer Lifecycle Plan &mdash; To Prevent and Protect</p></footer>
+
+<script>
+// Scroll reveal
+const ro=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('visible');ro.unobserve(x.target)}})},{threshold:.08,rootMargin:'0px 0px -30px 0px'});
+document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+
+// Nav
+const nav=document.getElementById('mainNav');
+let tick=false;
+window.addEventListener('scroll',()=>{if(!tick){requestAnimationFrame(()=>{
+  nav.classList.toggle('scrolled',window.scrollY>40);
+  let c='';document.querySelectorAll('section[id]').forEach(s=>{if(window.scrollY>=s.offsetTop-120)c=s.id});
+  document.querySelectorAll('.nav-links a').forEach(l=>l.classList.toggle('active',l.getAttribute('href')==='#'+c));
+  tick=false});tick=true}});
+
+// Lifecycle tabs
+function activateStage(s){
+  document.querySelectorAll('.lc-stage').forEach(x=>{x.classList.remove('active');x.setAttribute('aria-selected','false')});
+  s.classList.add('active');s.setAttribute('aria-selected','true');
+  document.querySelectorAll('.stage-panel').forEach(p=>{p.classList.remove('active');if(p.dataset.s===s.dataset.s)p.classList.add('active')});
+  s.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+}
+document.querySelectorAll('.lc-stage').forEach(s=>{
+  s.addEventListener('click',()=>activateStage(s));
+  s.addEventListener('keydown',e=>{
+    if(e.key==='Enter'||e.key===' '){e.preventDefault();activateStage(s)}
+    if(e.key==='ArrowRight'){const n=s.nextElementSibling;if(n&&n.classList.contains('lc-stage')){n.focus();activateStage(n)}}
+    if(e.key==='ArrowLeft'){const p=s.previousElementSibling;if(p&&p.classList.contains('lc-stage')){p.focus();activateStage(p)}}
+  });
+});
+
+// Journey tabs
+document.querySelectorAll('.journey-tab').forEach(t=>{
+  t.addEventListener('click',()=>{
+    document.querySelectorAll('.journey-tab').forEach(x=>x.classList.remove('active'));t.classList.add('active');
+    document.querySelectorAll('.journey-flow').forEach(f=>{f.classList.remove('active');if(f.dataset.j===t.dataset.j)f.classList.add('active')});
+  });
+});
+
+// Position the timeline connecting line at the dot center
+function positionLine(){
+  const track=document.querySelector('.lc-track');
+  const dots=track.querySelectorAll('.lc-dot');
+  const line=track.querySelector('.lc-line');
+  if(dots.length&&line){
+    const first=dots[0].getBoundingClientRect();
+    const last=dots[dots.length-1].getBoundingClientRect();
+    const trackRect=track.getBoundingClientRect();
+    const scrollLeft=track.scrollLeft;
+    line.style.top=(first.top-trackRect.top+first.height/2)+'px';
+    line.style.left=(first.left-trackRect.left+scrollLeft+first.width/2)+'px';
+    line.style.width=(last.left-first.left)+'px';
+  }
+}
+positionLine();
+window.addEventListener('resize',positionLine);
+
+// Smooth scroll
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',function(e){e.preventDefault();const t=document.querySelector(this.getAttribute('href'));if(t)t.scrollIntoView({behavior:'smooth',block:'start'})});
+});
+
+// Persona generator
+const SANITY_PROJECT='gccoxk2g',SANITY_DATASET='production';
+
+function verifyPass(){
+  const pass=document.getElementById('passInput').value.trim();
+  if(pass){
+    sessionStorage.setItem('acx_pass',pass);
+    document.getElementById('genPass').style.display='none';
+    document.getElementById('genAuthed').classList.add('visible');
+    document.getElementById('genForm').classList.add('visible');
+    document.getElementById('promptInput').focus();
+  }
+}
+
+// Restore passphrase from session
+if(sessionStorage.getItem('acx_pass')){
+  document.getElementById('genPass').style.display='none';
+  document.getElementById('genAuthed').classList.add('visible');
+  document.getElementById('genForm').classList.add('visible');
+}
+
+// Allow Enter key on passphrase input
+document.getElementById('passInput').addEventListener('keydown',function(e){
+  if(e.key==='Enter'){e.preventDefault();verifyPass()}
+});
+
+// Allow Enter key on prompt input
+document.getElementById('promptInput').addEventListener('keydown',function(e){
+  if(e.key==='Enter'){e.preventDefault();generatePersona()}
+});
+
+async function generatePersona(){
+  const prompt=document.getElementById('promptInput').value.trim();
+  const pass=sessionStorage.getItem('acx_pass');
+  const status=document.getElementById('genStatus');
+  const btn=document.getElementById('genBtn');
+  if(!prompt){status.className='gen-status error';status.textContent='Please describe a persona.';return}
+  btn.disabled=true;
+  status.className='gen-status loading';
+  status.innerHTML='<span class="gen-spinner"></span>Generating persona journey... this takes about 30 seconds.';
+  try{
+    const res=await fetch('/.netlify/functions/generate',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({prompt,passphrase:pass})
+    });
+    const data=await res.json();
+    if(!res.ok){
+      if(res.status===403){sessionStorage.removeItem('acx_pass');document.getElementById('genPass').style.display='flex';document.getElementById('genAuthed').classList.remove('visible');document.getElementById('genForm').classList.remove('visible')}
+      throw new Error(data.error||'Generation failed');
+    }
+    status.className='gen-status success';status.textContent='Persona generated! Redirecting...';
+    setTimeout(()=>{window.location.href='persona.html?id='+encodeURIComponent(data._id)},500);
+  }catch(err){
+    status.className='gen-status error';status.textContent=err.message;btn.disabled=false;
+  }
+}
+
+// Persona gallery
+async function loadGallery(){
+  const el=document.getElementById('galleryContent');
+  try{
+    const query=encodeURIComponent('*[_type == "persona"] | order(_createdAt desc)[0...20]{_id, title, emoji, heroDesc}');
+    const url='https://'+SANITY_PROJECT+'.apicdn.sanity.io/v2024-01-01/data/query/'+SANITY_DATASET+'?query='+query;
+    const res=await fetch(url);
+    const json=await res.json();
+    const personas=json.result||[];
+    if(!personas.length){
+      el.className='gallery-empty';el.textContent='No persona journeys generated yet. Use the prompt above to create the first one.';return;
+    }
+    el.className='gallery-grid';
+    el.innerHTML=personas.map(p=>{
+      const desc=p.heroDesc||'';
+      const short=desc.length>120?desc.slice(0,120)+'...':desc;
+      return '<a class="gallery-card reveal" href="persona.html?id='+encodeURIComponent(p._id)+'">'+
+        '<div class="gallery-emoji">'+(p.emoji||'')+'</div>'+
+        '<h3>'+(p.title||'Untitled')+'</h3>'+
+        '<p>'+short+'</p></a>';
+    }).join('');
+    el.querySelectorAll('.reveal').forEach(r=>ro.observe(r));
+  }catch(err){
+    console.error('Gallery load error:',err);
+    el.className='gallery-empty';el.textContent='Could not load personas.';
+  }
+}
+loadGallery();
+</script>
+</body>
+</html>

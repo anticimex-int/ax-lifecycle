@@ -41,21 +41,18 @@ function sanitize(persona, prompt) {
     closeStatement: String(persona.closeStatement || ""),
     context: (persona.context || []).map((c) => ({
       _key: key(),
-      _type: "object",
       title: String(c.title || ""),
       items: (c.items || []).map(String),
     })),
     stages: (persona.stages || []).map((s) => ({
       _key: key(),
-      _type: "object",
       heading: String(s.heading || ""),
       subtitle: String(s.subtitle || ""),
       quote: String(s.quote || ""),
       outcome: String(s.outcome || ""),
       cards: (s.cards || []).map((c) => ({
         _key: key(),
-        _type: "object",
-        icon: String(c.icon || ""),
+          icon: String(c.icon || ""),
         title: String(c.title || ""),
         style: ["default", "highlight", "action", "full"].includes(c.style)
           ? c.style
@@ -70,7 +67,6 @@ function sanitize(persona, prompt) {
     })),
     metrics: (persona.metrics || []).map((m) => ({
       _key: key(),
-      _type: "object",
       value: String(m.value || ""),
       label: String(m.label || ""),
     })),

@@ -221,8 +221,8 @@ footer a:hover{color:rgba(255,255,255,.7)}
 <div id="content-state"></div>
 
 <script>
-const SANITY_PROJECT = 'gccoxk2g';
-const SANITY_DATASET = 'production';
+let SANITY_PROJECT = '';
+let SANITY_DATASET = '';
 const STAGES = [
   { num: '01', name: 'Awareness', color: '#6366f1' },
   { num: '02', name: 'Consideration', color: '#8b5cf6' },
@@ -396,7 +396,7 @@ async function init() {
 const nav = document.getElementById('mainNav');
 window.addEventListener('scroll', () => { nav.classList.toggle('scrolled', window.scrollY > 40); });
 
-init();
+fetch('/.netlify/functions/config').then(r=>r.json()).then(c=>{SANITY_PROJECT=c.projectId;SANITY_DATASET=c.dataset;init()});
 </script>
 </body>
 </html>

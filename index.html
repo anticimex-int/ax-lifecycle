@@ -822,7 +822,8 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
 });
 
 // Persona generator
-const SANITY_PROJECT='gccoxk2g',SANITY_DATASET='production';
+let SANITY_PROJECT='',SANITY_DATASET='';
+fetch('/.netlify/functions/config').then(r=>r.json()).then(c=>{SANITY_PROJECT=c.projectId;SANITY_DATASET=c.dataset;loadGallery()});
 
 function verifyPass(){
   const pass=document.getElementById('passInput').value.trim();
@@ -905,7 +906,6 @@ async function loadGallery(){
     el.className='gallery-empty';el.textContent='Could not load personas.';
   }
 }
-loadGallery();
 </script>
 </body>
 </html>

@@ -80,21 +80,13 @@ h1.hero-title em{font-style:normal;color:var(--green-70)}
 
 /* PROMPT */
 .persona-prompt{max-width:680px;margin:0 auto;text-align:left}
-.prompt-input-wrap{position:relative;display:flex;align-items:center;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.14);border-radius:.75rem;padding:.35rem .35rem .35rem 1.5rem;transition:border-color .25s var(--ease),background .25s var(--ease),box-shadow .25s var(--ease)}
+.prompt-input-wrap{position:relative;display:flex;align-items:center;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.14);border-radius:.75rem;padding:.6rem .6rem .6rem 1.5rem;gap:.75rem;transition:border-color .25s var(--ease),background .25s var(--ease),box-shadow .25s var(--ease)}
 .prompt-input-wrap:focus-within{border-color:var(--green-70);background:rgba(255,255,255,.1);box-shadow:0 0 0 4px rgba(30,214,140,.08),0 20px 60px -15px rgba(0,0,0,.3)}
 .prompt-input-wrap input{flex:1;padding:1.1rem 0;border:none;background:transparent;color:var(--white);font-family:var(--font);font-size:1.15rem;outline:none;line-height:1.5;min-width:0}
 .prompt-input-wrap input::placeholder{color:rgba(255,255,255,.3)}
 .prompt-input-wrap button{padding:.85rem 1.75rem;border:none;border-radius:.5rem;background:var(--green-70);color:var(--blue-10);font-family:var(--font);font-size:.95rem;font-weight:700;cursor:pointer;transition:all .2s var(--ease);white-space:nowrap;flex-shrink:0}
 .prompt-input-wrap button:hover{background:#17c47e;transform:translateY(-1px);box-shadow:0 4px 20px rgba(30,214,140,.3)}
 .prompt-input-wrap button:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
-.prompt-input-wrap--locked{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.1)}
-.prompt-input-wrap--locked button{background:rgba(255,255,255,.1);color:rgba(255,255,255,.65)}
-.prompt-input-wrap--locked button:hover{background:rgba(255,255,255,.18);color:var(--white);box-shadow:none;transform:none}
-.prompt-lock-icon{width:18px;height:18px;stroke:rgba(255,255,255,.3);fill:none;stroke-width:2;flex-shrink:0;margin-right:.5rem}
-.prompt-authed{display:none;align-items:center;gap:.4rem;font-size:.8rem;color:var(--green-70);margin-bottom:.75rem;justify-content:center}
-.prompt-authed.visible{display:flex}
-.prompt-main{display:none}
-.prompt-main.visible{display:block}
 .prompt-hints{margin-top:.75rem;font-size:.82rem;color:rgba(255,255,255,.35);text-align:center}
 .prompt-hint-cycle{color:rgba(255,255,255,.55);font-weight:600;display:inline-block;transition:opacity .3s var(--ease),transform .3s var(--ease)}
 .hero-stats{display:flex;align-items:center;justify-content:center;gap:1rem;margin-top:3.5rem;font-size:.75rem;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.08em;font-weight:700}
@@ -201,11 +193,12 @@ h1.hero-title em{font-style:normal;color:var(--green-70)}
 .gcol li::before{content:'';width:6px;min-width:6px;height:2px;border-radius:1px;flex-shrink:0;transform:translateY(-.25em)}
 .gcol.std li::before{background:var(--blue-60)}
 .gcol.lcl li::before{background:var(--green-70)}
-.gov-heading{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--text-secondary);margin-top:2.5rem;margin-bottom:1rem}
-.gov-layers{display:flex;gap:1rem;flex-wrap:wrap}
-.gov-layer{flex:1;min-width:200px;text-align:center;padding:1.5rem 1rem;border-radius:.375rem;border:1px solid var(--blue-95);background:var(--blue-100)}
-.gov-layer .num{font-size:1.8rem;font-weight:700;line-height:1;margin-bottom:.35rem;color:var(--blue-20)}
-.gov-layer .label{font-size:.85rem;color:var(--text-secondary)}
+.gov-heading{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:var(--neutral-40);margin-top:2.5rem;margin-bottom:1rem;text-align:center}
+.gov-layers{display:flex;gap:.75rem;flex-wrap:wrap;position:relative}
+.gov-layers::before{content:'';position:absolute;top:50%;left:0;right:0;height:1px;background:var(--blue-95);z-index:0}
+.gov-layer{flex:1;min-width:200px;text-align:center;padding:1.25rem 1rem;border-radius:.5rem;border:none;background:var(--white);position:relative;z-index:1;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.gov-layer .num{font-size:.7rem;font-weight:700;letter-spacing:.06em;width:1.6rem;height:1.6rem;line-height:1.6rem;border-radius:50%;background:var(--blue-20);color:var(--white);margin:0 auto .6rem;display:block}
+.gov-layer .label{font-size:.82rem;color:var(--text);font-weight:600;line-height:1.4}
 
 /* JOURNEYS */
 .journey-tabs{display:flex;gap:.35rem;margin-bottom:1.5rem;flex-wrap:wrap}
@@ -348,21 +341,11 @@ footer p{font-size:.72rem;color:rgba(255,255,255,.3)}
     <h1 class="hero-title reveal d1">The customer lifecycle is Anticimex&rsquo;s <em>operating system</em></h1>
     <p class="hero-desc reveal d2">Map any customer persona through the 5-stage lifecycle with AI.</p>
     <div class="persona-prompt reveal d3">
-      <div id="genPass">
-        <div class="prompt-input-wrap prompt-input-wrap--locked">
-          <svg class="prompt-lock-icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-          <input type="password" id="passInput" placeholder="Enter passphrase to unlock" aria-label="Passphrase">
-          <button onclick="verifyPass()">Unlock</button>
-        </div>
+      <div class="prompt-input-wrap">
+        <input type="text" id="promptInput" placeholder="Describe a customer persona..." aria-label="Describe a customer persona">
+        <button id="genBtn" onclick="generatePersona()">Generate</button>
       </div>
-      <div class="prompt-authed" id="genAuthed"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Unlocked</div>
-      <div class="prompt-main" id="genForm">
-        <div class="prompt-input-wrap">
-          <input type="text" id="promptInput" placeholder="Describe a customer persona..." aria-label="Describe a customer persona">
-          <button id="genBtn" onclick="generatePersona()">Generate</button>
-        </div>
-        <div class="prompt-hints">Try: <span class="prompt-hint-cycle" id="hintCycle">a family worried about mice in the attic</span></div>
-      </div>
+      <div class="prompt-hints">Try: <span class="prompt-hint-cycle" id="hintCycle">a family worried about mice in the attic</span></div>
       <div class="gen-status" id="genStatus"></div>
     </div>
     <div class="hero-stats reveal d4">
@@ -833,29 +816,6 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
 let SANITY_PROJECT='',SANITY_DATASET='';
 fetch('/.netlify/functions/config').then(r=>{if(!r.ok)throw new Error(r.status);return r.json()}).then(c=>{SANITY_PROJECT=c.projectId;SANITY_DATASET=c.dataset;loadGallery()}).catch(e=>console.error('Config load failed:',e));
 
-function verifyPass(){
-  const pass=document.getElementById('passInput').value.trim();
-  if(pass){
-    sessionStorage.setItem('acx_pass',pass);
-    document.getElementById('genPass').style.display='none';
-    document.getElementById('genAuthed').classList.add('visible');
-    document.getElementById('genForm').classList.add('visible');
-    document.getElementById('promptInput').focus();
-  }
-}
-
-// Restore passphrase from session
-if(sessionStorage.getItem('acx_pass')){
-  document.getElementById('genPass').style.display='none';
-  document.getElementById('genAuthed').classList.add('visible');
-  document.getElementById('genForm').classList.add('visible');
-}
-
-// Allow Enter key on passphrase input
-document.getElementById('passInput').addEventListener('keydown',function(e){
-  if(e.key==='Enter'){e.preventDefault();verifyPass()}
-});
-
 // Allow Enter key on prompt input
 document.getElementById('promptInput').addEventListener('keydown',function(e){
   if(e.key==='Enter'){e.preventDefault();generatePersona()}
@@ -863,22 +823,20 @@ document.getElementById('promptInput').addEventListener('keydown',function(e){
 
 async function generatePersona(){
   const prompt=document.getElementById('promptInput').value.trim();
-  const pass=sessionStorage.getItem('acx_pass');
   const status=document.getElementById('genStatus');
   const btn=document.getElementById('genBtn');
   if(!prompt){status.className='gen-status error';status.textContent='Please describe a persona.';return}
   btn.disabled=true;
   status.className='gen-status loading';
-  status.innerHTML='<span class="gen-spinner"></span>Generating persona journey \u2014 this can take up to a minute...';
+  status.innerHTML='<span class="gen-spinner"></span>Generating persona journey...';
   try{
     const res=await fetch('/.netlify/functions/generate',{
       method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({prompt,passphrase:pass})
+      body:JSON.stringify({prompt})
     });
     let data;
-    try{data=await res.json()}catch{throw new Error('Server error (status '+res.status+'). Please try again.')}
+    try{data=await res.json()}catch{throw new Error('Server error (status '+res.status+'). Try again.')}
     if(!res.ok){
-      if(res.status===403){sessionStorage.removeItem('acx_pass');document.getElementById('genPass').style.display='flex';document.getElementById('genAuthed').classList.remove('visible');document.getElementById('genForm').classList.remove('visible')}
       throw new Error(data.error||'Generation failed');
     }
     status.className='gen-status success';status.textContent='Persona generated! Redirecting...';
